@@ -175,8 +175,6 @@ in {
         "$modifier CONTROL,left,workspace,e-1"
         "$modifier,mouse_down,workspace, e+1"
         "$modifier,mouse_up,workspace, e-1"
-        "ALT,Tab,cyclenext"
-        "ALT,Tab,bringactivetotop"
         ",XF86AudioRaiseVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
         ",XF86AudioLowerVolume,exec,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
         " ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
@@ -191,6 +189,11 @@ in {
       bindm = [
         "$modifier, mouse:272, movewindow"
         "$modifier, mouse:273, resizewindow"
+      ];
+
+      binde = [
+        "ALT,Tab,cyclenext"
+        "ALT,Tab,bringactivetotop"
       ];
 
       windowrulev2 = [
