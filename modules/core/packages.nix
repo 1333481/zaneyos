@@ -25,6 +25,7 @@
     brave # Brave Browser
     brightnessctl # For Screen Brightness Control
     cmatrix # Matrix Movie Effect In Terminal
+    cliphist # Clipboard Manager
     cowsay # Great Fun Terminal Program
     docker-compose # Allows Controlling Docker From A Single File
     duf # Utility For Viewing Disk Usage In Terminal
@@ -33,7 +34,7 @@
     file-roller # Archive Manager
     gedit # Simple Graphical Text Editor
     gimp # Great Photo Editor
-    glxinfo  #needed for inxi diag util 
+    glxinfo #needed for inxi diag util
     greetd.tuigreet # The Login Manager (Sometimes Referred To As Display Manager)
     htop # Simple Terminal Based System Monitor
     hyprpicker # Color Picker
@@ -47,7 +48,7 @@
     mpv # Incredible Video Player
     ncdu # Disk Usage Analyzer With Ncurses Interface
     nixfmt-rfc-style # Nix Formatter
-    nwg-displays  #configure monitor configs via GUI
+    nwg-displays #configure monitor configs via GUI
     onefetch #provides zsaneyos build info on current system
     pavucontrol # For Editing Audio Levels & Devices
     pciutils # Collection Of Tools For Inspecting PCI Devices
