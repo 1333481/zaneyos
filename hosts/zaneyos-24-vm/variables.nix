@@ -18,7 +18,7 @@
   # Note: This is evil-helix with VIM keybindings by default
   helixEnable = false;
   #To install: Enable here, zcli rebuild, then run zcli doom install
-  doomEmacsEnable = false;
+  doomEmacsEnable = true;
 
   # Hyprland Settings
   # Examples:
