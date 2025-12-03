@@ -5,7 +5,15 @@
 
 ---
 
-# 🚀 **Current Release - ZaneyOS v2.5.2**
+# 🚀 **Current Release - ZaneyOS v2.5.3**
+
+#### 📅 **Updated: December 3rd, 2025**
+
+- Added: Support for `kb_variants` at install time
+  - options like `dvorka`, `coleman`, `euro`
+  - Sets console, SDDM, and Hyprland
+- Fixed: TUI greetd failed to build
+  - Service name changed to `services.greetd`
 
 #### 📅 **Updated: December 1st, 2025**
 
