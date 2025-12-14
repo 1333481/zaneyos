@@ -14,6 +14,11 @@
 - `--diff-always` to `nh` rebuilds
 - Removed extra `Ghz` in `fastfetch` output
 - Fixed hard coded directory for cheatsheets path
+- Removed hard coded title
+- Focus follows mouse
+  - Consistent with hyprland
+- Turned off resize overlay
+- Added curosr wrap shader
   - Thanks to Steven Scott for the fixes
 
 #### 📅 **Updated: December 12th, 2025**

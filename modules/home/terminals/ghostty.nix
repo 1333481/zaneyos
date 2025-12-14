@@ -2,21 +2,34 @@
   pkgs,
   config,
   ...
-}: {
+}: let
+  ghostHome = "${config.xdg.configHome}/ghostty";
+  shaderFile = "${ghostHome}/shaders/shader.glsl";
+in {
   # Install Ghostty theme(s) so referenced names resolve even if the package's share/themes doesn't include them
   home.file = {
-    ".config/ghostty/themes/catppuccin-mocha".source = ./ghostty-themes/catppuccin-mocha;
+    "${ghostHome}/themes/catppuccin-mocha".source = ./ghostty-themes/catppuccin-mocha;
 
     # Optional: dedicated background overlay config for reference (CLI overrides are used at runtime)
-    "${config.xdg.configHome}/ghostty/ghostty-bg.conf".text = ''
+    "${ghostHome}/ghostty-bg.conf".text = ''
       # Overlay for background image; the wrapper passes these via CLI as well
       # Keep the main config untouched; this file documents the desired values.
-      background-image=${config.home.homeDirectory}/Pictures/current_image
+      background-image=${config.home.homeDirectory}/Pictures/current_image_ghosttty
       background-image-opacity=0.9
       background-image-position=center
       background-image-fit=cover
       background-image-repeat=false
     '';
+
+    "${shaderFile}".source = pkgs.fetchurl {
+      # enabling custom-shader-animation = always, as cursors
+      # can get stuck on losing focus and look terrible. this
+      # will only animate for half a second, if you change to
+      # a whole-terminal crazily animated thing then probably
+      # disable that option
+      url = "https://github.com/sahaj-b/ghostty-cursor-shaders/raw/88c27a55b2e970eec19c21ef858a1a5bea489a1d/cursor_warp.glsl";
+      sha256 = "sha256-9ZlLcNu5cH0Ibc7qrS+lfrY4neesQm/5FdTCNa85G+s=";
+    };
   };
 
   programs.ghostty = {
@@ -27,7 +40,8 @@
     enableBashIntegration = true;
     clearDefaultKeybinds = true;
     settings = {
-      title = "ddubsOS-GhosTTY";
+      custom-shader = shaderFile;
+      custom-shader-animation = "always";
       term = "xterm-256color";
       confirm-close-surface = "false";
       font-family = "Maple Mono NF";
@@ -51,6 +65,9 @@
       quick-terminal-position = "center";
       shell-integration-features = "cursor,sudo";
       bold-is-bright = "false";
+      focus-follows-mouse = "true";
+      # never show the size popups
+      resize-overlay = "never";
       keybind = [
         # Copy/Paste
         "ctrl+shift+c=copy_to_clipboard"
@@ -122,7 +139,7 @@
 
             # Defaults
             SOURCE_DIR="$HOME/Pictures/Wallpapers"
-            LINK_PATH="$HOME/Pictures/current_image"
+            LINK_PATH="$HOME/Pictures/current_image_ghostty"
             LAUNCH=1
             FOREGROUND=0
 
@@ -143,11 +160,11 @@
                   cat <<'EOF'
       Usage: ghostty-bg [options] [--] [ghostty_args...]
 
-      Defaults: Launches ghostty in the background with background-image linked at ~/Pictures/current_image
+      Defaults: Launches ghostty in the background with background-image linked at ~/Pictures/current_image_ghostty
 
       Options:
         -s, --source DIR   Source directory of images (default: ~/Pictures/Wallpapers)
-        -l, --link PATH    Symlink path (default: ~/Pictures/current_image)
+        -l, --link PATH    Symlink path (default: ~/Pictures/current_image_ghostty)
             --no-launch    Only update symlink; do not launch ghostty
             --foreground   Run ghostty in the foreground (default is background)
         -h, --help         Show this help
