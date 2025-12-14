@@ -14,7 +14,7 @@ in {
     "${ghostHome}/ghostty-bg.conf".text = ''
       # Overlay for background image; the wrapper passes these via CLI as well
       # Keep the main config untouched; this file documents the desired values.
-      background-image=${config.home.homeDirectory}/Pictures/current_image_ghosttty
+      background-image=${config.home.homeDirectory}/Pictures/current_image_ghostty
       background-image-opacity=0.9
       background-image-position=center
       background-image-fit=cover
