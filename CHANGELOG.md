@@ -5,7 +5,7 @@
 
 ---
 
-# 🚀 **Current Release - ZaneyOS v2.5.6**
+# 🚀 **Current Release - ZaneyOS v2.5.7**
 
 #### 📅 **Updated: December 21st, 2025**
 
