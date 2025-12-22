@@ -385,9 +385,8 @@ sed -i 's|^[[:space:]]*username[[:space:]]*=[[:space:]]*"[^"]*";|    username = 
 awk -v h="$hostName" '
   BEGIN { in_hosts=0; seen=0 }
   /^\s*hosts\s*=\s*\[/ { in_hosts=1 }
-  in_hosts && match($0, /"[^\"]+"/) {
-    line=$0
-    if (index(line, "\"" h "\"")>0) seen=1
+  in_hosts && /"[^"]+"/ {
+    if (index($0, "\"" h "\"") > 0) seen=1
   }
   in_hosts && /\];/ {
     if (!seen) print "      \"" h "\""
@@ -402,7 +401,7 @@ grep -E "username\s*=|^\s*hosts\s*=|^\s*\"[^"]+\"$|^\s*\];$" -n ./flake.nix | se
 
 # Update timezone in system.nix
 cp ./modules/core/system.nix ./modules/core/system.nix.bak
-awk -v newtz="$timezone" '/^  time\.timeZone = / { sub(/"[^"]*"/, "\"" newtz "\""); } { print }' ./modules/core/system.nix.bak >./modules/core/system.nix
+sed -i -E "s|^  time\\.timeZone = \".*\";|  time.timeZone = \"${timezone}\";|" ./modules/core/system.nix
 rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
