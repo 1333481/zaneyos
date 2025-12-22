@@ -359,12 +359,6 @@ in
           fi
         fi
 
-        LOG_DIR="$HOME/zcli-cleanup-logs"
-        mkdir -p "$LOG_DIR"
-        LOG_FILE="$LOG_DIR/zcli-cleanup-$(${pkgs.coreutils}/bin/date +%Y-%m-%d_%H-%M-%S).log"
-        echo "Cleaning up old log files..." >> "$LOG_FILE"
-        ${pkgs.findutils}/bin/find "$LOG_DIR" -type f -mtime +3 -name "*.log" -delete >> "$LOG_FILE" 2>&1
-        echo "Cleanup process logged to $LOG_FILE"
         ;;
       diag)
         echo "Generating system diagnostic report..."
