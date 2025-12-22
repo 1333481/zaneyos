@@ -349,7 +349,7 @@ echo "  profile: $profile"
 cp ./flake.nix ./flake.nix.bak
 
 # 1) Update username if present
-sed -i 's|^[[:space:]]*username[[:space:]]*=[[:space:]]*"[^"]*";|    username = "'$installusername'";|' ./flake.nix
+sed -i -E "s|^[[:space:]]*username[[:space:]]*=[[:space:]]*\"[^\"]*\";|    username = \"${installusername}\";|" ./flake.nix
 
 # 2) Ensure the new host is listed in the hosts array (append if missing)
 awk -v h="$hostName" '
@@ -367,13 +367,14 @@ awk -v h="$hostName" '
 
 # Show summary of effective username and hosts list lines
 echo -e "${GREEN}After flake updates:${NC}"
-grep -E "username\s*=|^\s*hosts\s*=|^\s*\"[^"]+\"$|^\s*\];$" -n ./flake.nix | sed -n '/hosts = \[/,/];/p'
+grep -E 'username\s*=|^\s*hosts\s*=|^\s*"[^"]+"$|^\s*\];$' -n ./flake.nix | sed -n '/hosts = \[/,/];/p'
 
-# Update timezone in system.nix
+# Update timezone in system.nix (robust quoting via Python helper)
 cp ./modules/core/system.nix ./modules/core/system.nix.bak
-# Escape sed-sensitive chars in timezone (e.g., /, &, |)
-tz_safe=$(printf '%s' "$timezone" | sed 's/[\/&|]/\\&/g')
-sed -i -E "s|^  time\\.timeZone = \".*\";|  time.timeZone = \"${tz_safe}\";|" ./modules/core/system.nix
+python3 ./scripts/update_timezone.py ./modules/core/system.nix "$timezone" || {
+  print_error "Failed to update time.timeZone in modules/core/system.nix";
+  exit 1;
+}
 rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
