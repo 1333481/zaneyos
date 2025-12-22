@@ -327,7 +327,7 @@ echo ""
 print_summary "$hostName" "$profile" "$installusername" "$timezone" "$keyboardLayout" "$keyboardVariant" "$consoleKeyMap"
 echo ""
 echo -e "${YELLOW}Please review the configuration above.${NC}"
-printf "%s" "${YELLOW}Continue with installation? (Y/N): ${NC}"
+printf "%b" "${YELLOW}Continue with installation? (Y/N): ${NC}"
 read -r REPLY
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -360,9 +360,7 @@ awk -v h="$hostName" '
   { print }
 ' ./flake.nix > ./flake.nix.tmp && mv ./flake.nix.tmp ./flake.nix
 
-# Show summary of effective username and hosts list lines
-echo -e "${GREEN}After flake updates:${NC}"
-grep -E 'username\s*=|^\s*hosts\s*=|^\s*"[^"]+"$|^\s*\];$' -n ./flake.nix | sed -n '/hosts = \[/,/];/p'
+# (quiet) flake updated
 
 # Update timezone in system.nix (robust quoting via Python helper)
 cp ./modules/core/system.nix ./modules/core/system.nix.bak
@@ -391,7 +389,7 @@ git add .
 git config --global --unset-all user.name
 git config --global --unset-all user.email
 
-print_header "Generating Hardware Configuration -- Ignore ERROR: cannot access /bin"
+print_header "Generating Hardware Configuration"
 sudo nixos-generate-config --show-hardware-config >./hosts/$hostName/hardware.nix
 
 print_header "Setting Nix Configuration"
