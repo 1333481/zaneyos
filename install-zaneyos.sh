@@ -408,37 +408,23 @@ rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
 cp ./hosts/$hostName/variables.nix ./hosts/$hostName/variables.nix.bak
-# Write AWK program to a temporary file to avoid any shell parsing edge cases
-awk_prog=$(mktemp)
-cat > "$awk_prog" <<'AWK'
-BEGIN { in_block=0 }
-/zaneyos[[:space:]]*=[[:space:]]*\{/ { in_block=1 }
-in_block && /gitUsername[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_user "\"") }
-in_block && /gitEmail[[:space:]]*=[[:space:]]*"[^"]*"/    { sub(/"[^"]*"/, "\"" v_email "\"") }
-in_block && /hostName[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_host "\"") }
-in_block && /gpuProfile[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_gpu "\"") }
-in_block && /keyboardLayout[[:space:]]*=[[:space:]]*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
-in_block && /keyboardVariant[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
-in_block && /consoleKeyMap[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
-/\};/ && in_block { in_block=0 }
+# Use sed-based replacements to avoid awk/shell quoting issues
+esc() { printf '%s' "$1" | sed -e 's/[\/&]/\\&/g'; }
+v_user=$(esc "$gitUsername")
+v_email=$(esc "$gitEmail")
+v_host=$(esc "$hostName")
+v_gpu=$(esc "$profile")
+v_kb=$(esc "$keyboardLayout")
+v_kv=$(esc "$keyboardVariant")
+v_ckm=$(esc "$consoleKeyMap")
 
-# Fallback for old style top-level keys
-!in_block && /^[[:space:]]*gitUsername[[:space:]]*=[[:space:]]*"[^"]*"/     { sub(/"[^"]*"/, "\"" v_user "\"") }
-!in_block && /^[[:space:]]*gitEmail[[:space:]]*=[[:space:]]*"[^"]*"/        { sub(/"[^"]*"/, "\"" v_email "\"") }
-!in_block && /^[[:space:]]*keyboardLayout[[:space:]]*=[[:space:]]*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
-!in_block && /^[[:space:]]*keyboardVariant[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
-!in_block && /^[[:space:]]*consoleKeyMap[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
-{ print }
-AWK
-awk -v v_user="$gitUsername" \
-  -v v_email="$gitEmail" \
-  -v v_host="$hostName" \
-  -v v_gpu="$profile" \
-  -v v_kb="$keyboardLayout" \
-  -v v_kv="$keyboardVariant" \
-  -v v_ckm="$consoleKeyMap" \
-  -f "$awk_prog" ./hosts/$hostName/variables.nix.bak > ./hosts/$hostName/variables.nix
-rm -f "$awk_prog"
+sed -i -E "s|(^[[:space:]]*gitUsername[[:space:]]*=[[:space:]]*")[^"]*(";)|\1${v_user}\2|" ./hosts/$hostName/variables.nix
+sed -i -E "s|(^[[:space:]]*gitEmail[[:space:]]*=[[:space:]]*")[^"]*(";)|\1${v_email}\2|"   ./hosts/$hostName/variables.nix
+sed -i -E "s|(^[[:space:]]*hostName[[:space:]]*=[[:space:]]*")[^"]*(";)|\1${v_host}\2|"   ./hosts/$hostName/variables.nix
+sed -i -E "s|(^[[:space:]]*gpuProfile[[:space:]]*=[[:space:]]*")[^"]*(";)|\1${v_gpu}\2|" ./hosts/$hostName/variables.nix
+sed -i -E "s|(^[[:space:]]*keyboardLayout[[:space:]]*=[[:space:]]*")[^"]*(";)|\1${v_kb}\2|" ./hosts/$hostName/variables.nix
+sed -i -E "s|(^[[:space:]]*keyboardVariant[[:space:]]*=[[:space:]]*")[^"]*(";)|\1${v_kv}\2|" ./hosts/$hostName/variables.nix
+sed -i -E "s|(^[[:space:]]*consoleKeyMap[[:space:]]*=[[:space:]]*")[^"]*(";)|\1${v_ckm}\2|"   ./hosts/$hostName/variables.nix
 rm ./hosts/$hostName/variables.nix.bak
 
 echo "Configuration files updated successfully!"
