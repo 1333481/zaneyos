@@ -237,7 +237,7 @@ else
 fi
 
 print_header "Cloning ZaneyOS Repository"
-git clone https://gitlab.com/zaney/zaneyos.git -b main --depth=1 ~/zaneyos
+git clone https://gitlab.com/zaney/zaneyos.git -b zos-next --depth=1 ~/zaneyos
 cd ~/zaneyos || exit 1
 
 print_header "Git Configuration"
@@ -421,7 +421,7 @@ awk -v v_user="$gitUsername" \
   !in_block && /^\s*keyboardVariant\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
   !in_block && /^\s*consoleKeyMap\s*=\s*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
   { print }
-' ./hosts/$hostName/variables.nix.bak > ./hosts/$hostName/variables.nix
+' ./hosts/$hostName/variables.nix.bak >./hosts/$hostName/variables.nix
 rm ./hosts/$hostName/variables.nix.bak
 
 echo "Configuration files updated successfully!"
