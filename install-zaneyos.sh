@@ -414,26 +414,27 @@ awk -v v_user="$gitUsername" \
   -v v_gpu="$profile" \
   -v v_kb="$keyboardLayout" \
   -v v_kv="$keyboardVariant" \
-  -v v_ckm="$consoleKeyMap" '
-  BEGIN { in_block=0 }
-  /zaneyos\s*=\s*\{/ { in_block=1 }
-  in_block && /gitUsername\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_user "\"") }
-  in_block && /gitEmail\s*=\s*"[^"]*"/    { sub(/"[^"]*"/, "\"" v_email "\"") }
-  in_block && /hostName\s*=\s*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_host "\"") }
-  in_block && /gpuProfile\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_gpu "\"") }
-  in_block && /keyboardLayout\s*=\s*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
-  in_block && /keyboardVariant\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
-  in_block && /consoleKeyMap\s*=\s*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
-  /\};/ && in_block { in_block=0 }
+  -v v_ckm="$consoleKeyMap" \
+  -f /dev/stdin ./hosts/$hostName/variables.nix.bak > ./hosts/$hostName/variables.nix <<'AWK'
+BEGIN { in_block=0 }
+/zaneyos[[:space:]]*=[[:space:]]*\{/ { in_block=1 }
+in_block && /gitUsername[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_user "\"") }
+in_block && /gitEmail[[:space:]]*=[[:space:]]*"[^"]*"/    { sub(/"[^"]*"/, "\"" v_email "\"") }
+in_block && /hostName[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_host "\"") }
+in_block && /gpuProfile[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_gpu "\"") }
+in_block && /keyboardLayout[[:space:]]*=[[:space:]]*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
+in_block && /keyboardVariant[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
+in_block && /consoleKeyMap[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
+/\};/ && in_block { in_block=0 }
 
-  # Fallback for old style top-level keys
-  !in_block && /^\s*gitUsername\s*=\s*"[^"]*"/     { sub(/"[^"]*"/, "\"" v_user "\"") }
-  !in_block && /^\s*gitEmail\s*=\s*"[^"]*"/        { sub(/"[^"]*"/, "\"" v_email "\"") }
-  !in_block && /^\s*keyboardLayout\s*=\s*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
-  !in_block && /^\s*keyboardVariant\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
-  !in_block && /^\s*consoleKeyMap\s*=\s*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
-  { print }
-' ./hosts/$hostName/variables.nix.bak >./hosts/$hostName/variables.nix
+# Fallback for old style top-level keys
+!in_block && /^[[:space:]]*gitUsername[[:space:]]*=[[:space:]]*"[^"]*"/     { sub(/"[^"]*"/, "\"" v_user "\"") }
+!in_block && /^[[:space:]]*gitEmail[[:space:]]*=[[:space:]]*"[^"]*"/        { sub(/"[^"]*"/, "\"" v_email "\"") }
+!in_block && /^[[:space:]]*keyboardLayout[[:space:]]*=[[:space:]]*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
+!in_block && /^[[:space:]]*keyboardVariant[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
+!in_block && /^[[:space:]]*consoleKeyMap[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
+{ print }
+AWK
 rm ./hosts/$hostName/variables.nix.bak
 
 echo "Configuration files updated successfully!"
