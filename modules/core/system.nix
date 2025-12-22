@@ -32,7 +32,7 @@ in {
   };
   environment.variables = {
     NIXOS_OZONE_WL = "1";
-    ZANEYOS_VERSION = "2.5.6";
+    ZANEYOS_VERSION = "2.5.NG";
     ZANEYOS = "true";
   };
   console.keyMap = "${consoleKeyMap}";
