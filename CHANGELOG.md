@@ -7,6 +7,17 @@
 
 # 🚀 **Current Release - ZaneyOS v2.5.6**
 
+#### 📅 **Updated: December 22th, 2025**
+
+- Huge refactor in flake and how variables are handled
+  - Huge shout out to [codingismy11to7](https://github.com/codingismy11to7)
+  - Using hostname for flake, not GPU profile
+  - Greatly simplied functions to reference per-host variables
+  - Install script updated and now also uses Python for better text handling
+  - Same commands as before using `zcli` util.
+  - Removed redundant git clones during install
+  - Hosts are saved in the flake no need to `zcli update-host`
+
 #### 📅 **Updated: December 20th, 2025**
 
 - Refactored:
