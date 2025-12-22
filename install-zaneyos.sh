@@ -408,14 +408,9 @@ rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
 cp ./hosts/$hostName/variables.nix ./hosts/$hostName/variables.nix.bak
-awk -v v_user="$gitUsername" \
-  -v v_email="$gitEmail" \
-  -v v_host="$hostName" \
-  -v v_gpu="$profile" \
-  -v v_kb="$keyboardLayout" \
-  -v v_kv="$keyboardVariant" \
-  -v v_ckm="$consoleKeyMap" \
-  -f /dev/stdin ./hosts/$hostName/variables.nix.bak > ./hosts/$hostName/variables.nix <<'AWK'
+# Write AWK program to a temporary file to avoid any shell parsing edge cases
+awk_prog=$(mktemp)
+cat > "$awk_prog" <<'AWK'
 BEGIN { in_block=0 }
 /zaneyos[[:space:]]*=[[:space:]]*\{/ { in_block=1 }
 in_block && /gitUsername[[:space:]]*=[[:space:]]*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_user "\"") }
@@ -435,6 +430,15 @@ in_block && /consoleKeyMap[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "
 !in_block && /^[[:space:]]*consoleKeyMap[[:space:]]*=[[:space:]]*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
 { print }
 AWK
+awk -v v_user="$gitUsername" \
+  -v v_email="$gitEmail" \
+  -v v_host="$hostName" \
+  -v v_gpu="$profile" \
+  -v v_kb="$keyboardLayout" \
+  -v v_kv="$keyboardVariant" \
+  -v v_ckm="$consoleKeyMap" \
+  -f "$awk_prog" ./hosts/$hostName/variables.nix.bak > ./hosts/$hostName/variables.nix
+rm -f "$awk_prog"
 rm ./hosts/$hostName/variables.nix.bak
 
 echo "Configuration files updated successfully!"
