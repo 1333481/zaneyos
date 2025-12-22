@@ -172,9 +172,10 @@ else
   echo -e "${GREEN}I hope you find your time here enjoyable!${NC}"
 fi
 
-print_header "Cloning zaneyos Repository"
-git clone https://gitlab.com/dwilliam62/zaneyos.git --depth=1  ~/zaneyos
-cd ~/zaneyos || exit 1
+# Use the repository where this script lives; no extra git clone needed
+REPO_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+print_header "Using local ZaneyOS repository at: $REPO_DIR"
+cd "$REPO_DIR" || exit 1
 
 print_header "Configuring Host and Profile"
 mkdir -p hosts/"$hostName"

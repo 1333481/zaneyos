@@ -155,7 +155,9 @@ if lspci | grep -qi 'vga\|3d'; then
   if $has_vm; then
     DETECTED_PROFILE="vm"
   elif $has_nvidia && $has_intel; then
-    DETECTED_PROFILE="hybrid"
+    DETECTED_PROFILE="nvidia-laptop"
+  elif $has_nvidia && $has_amd; then
+    DETECTED_PROFILE="amd-hybrid"
   elif $has_nvidia; then
     DETECTED_PROFILE="nvidia"
   elif $has_amd; then
@@ -183,10 +185,11 @@ if [ -z "$profile" ]; then
   read -rp "Enter Your Hardware Profile (GPU)
 Options:
 [ amd ]
-nvidia
-nvidia-laptop
-intel
-vm
+    nvidia
+    nvidia-laptop
+    amd-hybrid
+    intel
+    vm
 Please type out your choice: " profile
   if [ -z "$profile" ]; then
     profile="amd"
@@ -391,20 +394,34 @@ cp ./modules/core/system.nix ./modules/core/system.nix.bak
 awk -v newtz="$timezone" '/^  time\.timeZone = / { sub(/"[^"]*"/, "\"" newtz "\""); } { print }' ./modules/core/system.nix.bak >./modules/core/system.nix
 rm ./modules/core/system.nix.bak
 
-# Update variables in host file (do all keys in one pass to avoid quoting issues)
+# Update variables in host file; support both old style and new zaneyos options block
 cp ./hosts/$hostName/variables.nix ./hosts/$hostName/variables.nix.bak
 awk -v v_user="$gitUsername" \
   -v v_email="$gitEmail" \
+  -v v_host="$hostName" \
+  -v v_gpu="$profile" \
   -v v_kb="$keyboardLayout" \
   -v v_kv="$keyboardVariant" \
   -v v_ckm="$consoleKeyMap" '
-  /^  gitUsername = /     { sub(/"[^"]*"/, "\"" v_user "\"") }
-  /^  gitEmail = /        { sub(/"[^"]*"/, "\"" v_email "\"") }
-  /^  keyboardLayout = /  { sub(/"[^"]*"/, "\"" v_kb "\"") }
-  /^  keyboardVariant = / { sub(/"[^"]*"/, "\"" v_kv "\"") }
-  /^  consoleKeyMap = /   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
+  BEGIN { in_block=0 }
+  /zaneyos\s*=\s*\{/ { in_block=1 }
+  in_block && /gitUsername\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_user "\"") }
+  in_block && /gitEmail\s*=\s*"[^"]*"/    { sub(/"[^"]*"/, "\"" v_email "\"") }
+  in_block && /hostName\s*=\s*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_host "\"") }
+  in_block && /gpuProfile\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_gpu "\"") }
+  in_block && /keyboardLayout\s*=\s*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
+  in_block && /keyboardVariant\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
+  in_block && /consoleKeyMap\s*=\s*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
+  /\};/ && in_block { in_block=0 }
+
+  # Fallback for old style top-level keys
+  !in_block && /^\s*gitUsername\s*=\s*"[^"]*"/     { sub(/"[^"]*"/, "\"" v_user "\"") }
+  !in_block && /^\s*gitEmail\s*=\s*"[^"]*"/        { sub(/"[^"]*"/, "\"" v_email "\"") }
+  !in_block && /^\s*keyboardLayout\s*=\s*"[^"]*"/  { sub(/"[^"]*"/, "\"" v_kb "\"") }
+  !in_block && /^\s*keyboardVariant\s*=\s*"[^"]*"/ { sub(/"[^"]*"/, "\"" v_kv "\"") }
+  !in_block && /^\s*consoleKeyMap\s*=\s*"[^"]*"/   { sub(/"[^"]*"/, "\"" v_ckm "\"") }
   { print }
-' ./hosts/$hostName/variables.nix.bak >./hosts/$hostName/variables.nix
+' ./hosts/$hostName/variables.nix.bak > ./hosts/$hostName/variables.nix
 rm ./hosts/$hostName/variables.nix.bak
 
 echo "Configuration files updated successfully!"
