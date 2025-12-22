@@ -90,7 +90,7 @@ in
     #    Purpose: NixOS system management utility for ZaneyOS distribution
     #     Author: Don Williams (ddubs) & Zaney
     # Start Date: June 7th, 2025
-    #    Version: 1.0.2
+    #    Version: 1.0.3
     #
     # Architecture:
     # - Nix-generated shell script using writeShellScriptBin
@@ -129,48 +129,29 @@ in
 
 
     # --- Configuration ---
-    PROJECT="zaneyos"   #ddubos or zaneyos
-    PROFILE="${zaneyos.hostName}"
+    PROJECT="zaneyos"   # ddubos or zaneyos
+    VERSION="1.0.3"
     BACKUP_FILES_STR="${backupFilesString}"
-    VERSION="1.0.2"
-    FLAKE_NIX_PATH="$HOME/$PROJECT/flake.nix"
+    FLAKE_DIR="$HOME/$PROJECT"
+    FLAKE_NIX_PATH="$FLAKE_DIR/flake.nix"
 
     read -r -a BACKUP_FILES <<< "$BACKUP_FILES_STR"
 
     # --- Helper Functions ---
     verify_hostname() {
       local current_hostname
-      local flake_hostname
+      current_hostname="$(${pkgs.nettools}/bin/hostname)"
 
-      current_hostname="$(hostname)"
-
-      # Extract the host value from flake.nix
-      if [ -f "$FLAKE_NIX_PATH" ]; then
-        flake_hostname=$(${pkgs.gnugrep}/bin/grep -E '^[[:space:]]*host[[:space:]]*=' "$FLAKE_NIX_PATH" | ${pkgs.gnused}/bin/sed 's/.*=[[:space:]]*"\([^"]*\)".*/\1/')
-
-        if [ -z "$flake_hostname" ]; then
-          echo "Error: Could not find 'host' variable in $FLAKE_NIX_PATH" >&2
-          exit 1
-        fi
-
-        if [ "$current_hostname" != "$flake_hostname" ]; then
-          echo "Error: Hostname mismatch!" >&2
-          echo "  Current hostname: '$current_hostname'" >&2
-          echo "  Flake.nix host:   '$flake_hostname'" >&2
-          echo "" >&2
-          echo "Hint: Run 'zcli update-host' to automatically update flake.nix" >&2
-          echo "      or manually edit $FLAKE_NIX_PATH" >&2
-          exit 1
-        fi
-      else
+      if [ ! -f "$FLAKE_NIX_PATH" ]; then
         echo "Error: Flake.nix not found at $FLAKE_NIX_PATH" >&2
         exit 1
       fi
 
-      # Also check if host folder exists
-      local folder="$HOME/$PROJECT/hosts/$current_hostname"
+      # Check if a matching host folder exists under hosts/
+      local folder="$FLAKE_DIR/hosts/$current_hostname"
       if [ ! -d "$folder" ]; then
-        echo "Error: Matching host not found in $PROJECT, Missing folder: $folder" >&2
+        echo "Error: Matching host not found in $PROJECT. Missing: $folder" >&2
+        echo "Hint: Run 'zcli update-host' to create it (copies hosts/default) or run 'zcli update-host $current_hostname <profile>'." >&2
         exit 1
       fi
     }
@@ -335,6 +316,19 @@ in
       echo "$args_string"
     }
 
+    # Resolve the nixosConfigurations target name for nh
+    get_nh_target() {
+      local current_hostname
+      current_hostname="$(${pkgs.nettools}/bin/hostname)"
+      if [ -d "$FLAKE_DIR/hosts/$current_hostname" ]; then
+        echo "$current_hostname"
+      elif [ -d "$FLAKE_DIR/hosts/default" ]; then
+        echo "default"
+      else
+        echo ""
+      fi
+    }
+
     # --- Main Logic ---
     if [ "$#" -eq 0 ]; then
       echo "Error: No command provided." >&2
@@ -394,8 +388,14 @@ in
         # Parse additional arguments
         extra_args=$(parse_nh_args "$@")
 
-        echo "Starting NixOS rebuild for host: $(${pkgs.nettools}/bin/hostname)"
-        if eval "${pkgs.nh}/bin/nh os switch --diff always --hostname '$PROFILE' $extra_args"; then
+        target="$(get_nh_target)"
+        if [ -z "$target" ]; then
+          echo "Error: Could not resolve flake config (no hosts/$(${pkgs.nettools}/bin/hostname) or hosts/default)." >&2
+          exit 1
+        fi
+
+        echo "Starting NixOS rebuild for config: $target"
+        if eval "${pkgs.nh}/bin/nh os switch --diff always --hostname \"$target\" $extra_args"; then
           echo "Rebuild finished successfully"
         else
           echo "Rebuild Failed" >&2
@@ -409,9 +409,15 @@ in
         # Parse additional arguments
         extra_args=$(parse_nh_args "$@")
 
-        echo "Starting NixOS rebuild (boot) for host: $(${pkgs.nettools}/bin/hostname)"
+        target="$(get_nh_target)"
+        if [ -z "$target" ]; then
+          echo "Error: Could not resolve flake config (no hosts/$(${pkgs.nettools}/bin/hostname) or hosts/default)." >&2
+          exit 1
+        fi
+
+        echo "Starting NixOS rebuild (boot) for config: $target"
         echo "Note: Configuration will be activated on next reboot"
-        if eval "${pkgs.nh}/bin/nh os boot --diff always --hostname '$PROFILE' $extra_args"; then
+        if eval "${pkgs.nh}/bin/nh os boot --diff always --hostname \"$target\" $extra_args"; then
           echo "Rebuild-boot finished successfully"
           echo "New configuration set as boot default - restart to activate"
         else
@@ -438,8 +444,14 @@ in
         # Parse additional arguments
         extra_args=$(parse_nh_args "$@")
 
-        echo "Updating flake and rebuilding system for host: $(${pkgs.nettools}/bin/hostname)"
-        if eval "${pkgs.nh}/bin/nh os switch --diff always --hostname '$PROFILE' --update $extra_args"; then
+        target="$(get_nh_target)"
+        if [ -z "$target" ]; then
+          echo "Error: Could not resolve flake config (no hosts/$(${pkgs.nettools}/bin/hostname) or hosts/default)." >&2
+          exit 1
+        fi
+
+        echo "Updating flake and rebuilding system for config: $target"
+        if eval "${pkgs.nh}/bin/nh os switch --diff always --hostname \"$target\" --update $extra_args"; then
           echo "Update and rebuild finished successfully"
         else
           echo "Update and rebuild Failed" >&2
@@ -471,25 +483,31 @@ in
           exit 1
         fi
 
-        echo "Updating $FLAKE_NIX_PATH..."
+        echo "Preparing host '$target_hostname' (profile: $target_profile)..."
 
-        # Update host
-        if ${pkgs.gnused}/bin/sed -i "s/^[[:space:]]*host[[:space:]]*=[[:space:]]*\".*\"/    host = \"$target_hostname\"/" "$FLAKE_NIX_PATH"; then
-          echo "Successfully updated host to: $target_hostname"
+        # Ensure host directory exists (copy from hosts/default if missing)
+        if [ ! -d "$FLAKE_DIR/hosts/$target_hostname" ]; then
+          echo "Creating $FLAKE_DIR/hosts/$target_hostname from hosts/default..."
+          ${pkgs.coreutils}/bin/cp -r "$FLAKE_DIR/hosts/default" "$FLAKE_DIR/hosts/$target_hostname"
+        fi
+
+        # Update variables.nix (hostName and gpuProfile)
+        host_vars_file="$FLAKE_DIR/hosts/$target_hostname/variables.nix"
+        if [ -f "$host_vars_file" ]; then
+          ${pkgs.gnused}/bin/sed -i "s/\(hostName[[:space:]]*=\)[[:space:]]*\"[^\"]*\"/\1 \"$target_hostname\"/" "$host_vars_file"
+          ${pkgs.gnused}/bin/sed -i "s/\(gpuProfile[[:space:]]*=\)[[:space:]]*\"[^\"]*\"/\1 \"$target_profile\"/" "$host_vars_file"
         else
-          echo "Error: Failed to update host in $FLAKE_NIX_PATH" >&2
+          echo "Error: missing $host_vars_file" >&2
           exit 1
         fi
 
-        # Update profile
-        if ${pkgs.gnused}/bin/sed -i "s/^[[:space:]]*profile[[:space:]]*=[[:space:]]*\".*\"/    profile = \"$target_profile\"/" "$FLAKE_NIX_PATH"; then
-          echo "Successfully updated profile to: $target_profile"
-        else
-          echo "Error: Failed to update profile in $FLAKE_NIX_PATH" >&2
-          exit 1
+        # Ensure the host appears in the flake 'hosts' array
+        if ! ${pkgs.gnugrep}/bin/grep -q "\\\"$target_hostname\\\"" "$FLAKE_NIX_PATH"; then
+          echo "Adding '$target_hostname' to flake hosts list..."
+          ${pkgs.gnused}/bin/sed -i "/^\\s*hosts\\s*=\\s*\\[/a\\      \\\"$target_hostname\\\"" "$FLAKE_NIX_PATH"
         fi
 
-        echo "Flake.nix updated successfully!"
+        echo "Host '$target_hostname' is ready. You can now run: zcli rebuild"
         ;;
       add-host)
         hostname=""
@@ -621,7 +639,12 @@ in
                 echo "Enabling Doom Emacs in $host_vars_file..."
                 ensure_doom_enabled
                 echo "Rebuilding system so user modules are applied..."
-                if ${pkgs.nh}/bin/nh os switch --diff always --hostname "$PROFILE"; then
+                target="$(get_nh_target)"
+                if [ -z "$target" ]; then
+                  echo "Error: Could not resolve flake config (no hosts/$(${pkgs.nettools}/bin/hostname) or hosts/default)." >&2
+                  exit 1
+                fi
+                if ${pkgs.nh}/bin/nh os switch --diff always --hostname "$target"; then
                   echo "Rebuild complete. Proceeding with Doom installation."
                 else
                   echo "Error: Rebuild failed. Please fix the build and re-run 'zcli doom install'." >&2
