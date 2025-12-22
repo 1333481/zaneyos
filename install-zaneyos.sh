@@ -324,7 +324,8 @@ echo ""
 print_summary "$hostName" "$profile" "$installusername" "$timezone" "$keyboardLayout" "$keyboardVariant" "$consoleKeyMap"
 echo ""
 echo -e "${YELLOW}Please review the configuration above.${NC}"
-read -p "$(echo -e "${YELLOW}Continue with installation? (Y/N): ${NC}")" -n 1 -r
+printf "%s" "${YELLOW}Continue with installation? (Y/N): ${NC}"
+read -r REPLY
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   echo -e "${RED}Installation cancelled.${NC}"
@@ -370,9 +371,9 @@ grep -E "username\s*=|^\s*hosts\s*=|^\s*\"[^"]+\"$|^\s*\];$" -n ./flake.nix | se
 
 # Update timezone in system.nix
 cp ./modules/core/system.nix ./modules/core/system.nix.bak
-# Escape sed-sensitive chars in timezone (e.g., & and |)
-tz_safe=$(printf '%s' "$timezone" | sed 's/[&|]/\\&/g')
-sed -i -E 's|^  time\.timeZone = ".*";|  time.timeZone = '"\"$tz_safe\""';|' ./modules/core/system.nix
+# Escape sed-sensitive chars in timezone (e.g., /, &, |)
+tz_safe=$(printf '%s' "$timezone" | sed 's/[\/&|]/\\&/g')
+sed -i -E "s|^  time\\.timeZone = \".*\";|  time.timeZone = \"${tz_safe}\";|" ./modules/core/system.nix
 rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
