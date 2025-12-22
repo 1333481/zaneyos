@@ -408,23 +408,40 @@ rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
 cp ./hosts/$hostName/variables.nix ./hosts/$hostName/variables.nix.bak
-# Use sed-based replacements to avoid awk/shell quoting issues
-esc() { printf '%s' "$1" | sed -e 's/[\/&|]/\\&/g'; }
-v_user=$(esc "$gitUsername")
-v_email=$(esc "$gitEmail")
-v_host=$(esc "$hostName")
-v_gpu=$(esc "$profile")
-v_kb=$(esc "$keyboardLayout")
-v_kv=$(esc "$keyboardVariant")
-v_ckm=$(esc "$consoleKeyMap")
 
-sed -i -E 's|(^[[:space:]]*gitUsername[[:space:]]*=[[:space:]]*")[^"]*(";)|\1'"${v_user}"'\2|'         ./hosts/$hostName/variables.nix
-sed -i -E 's|(^[[:space:]]*gitEmail[[:space:]]*=[[:space:]]*")[^"]*(";)|\1'"${v_email}"'\2|'             ./hosts/$hostName/variables.nix
-sed -i -E 's|(^[[:space:]]*hostName[[:space:]]*=[[:space:]]*")[^"]*(";)|\1'"${v_host}"'\2|'             ./hosts/$hostName/variables.nix
-sed -i -E 's|(^[[:space:]]*gpuProfile[[:space:]]*=[[:space:]]*")[^"]*(";)|\1'"${v_gpu}"'\2|'           ./hosts/$hostName/variables.nix
-sed -i -E 's|(^[[:space:]]*keyboardLayout[[:space:]]*=[[:space:]]*")[^"]*(";)|\1'"${v_kb}"'\2|'        ./hosts/$hostName/variables.nix
-sed -i -E 's|(^[[:space:]]*keyboardVariant[[:space:]]*=[[:space:]]*")[^"]*(";)|\1'"${v_kv}"'\2|'       ./hosts/$hostName/variables.nix
-sed -i -E 's|(^[[:space:]]*consoleKeyMap[[:space:]]*=[[:space:]]*")[^"]*(";)|\1'"${v_ckm}"'\2|'        ./hosts/$hostName/variables.nix
+# Use Python for robust, quote-safe updates (avoids shell/sed escaping pitfalls)
+GIT_USERNAME="$gitUsername"
+GIT_EMAIL="$gitEmail"
+HOST_NAME="$hostName"
+GPU_PROFILE="$profile"
+KB_LAYOUT="$keyboardLayout"
+KB_VARIANT="$keyboardVariant"
+CONSOLE_KEYMAP="$consoleKeyMap"
+
+python3 - <<'PY'
+import os, re, pathlib, sys
+hn = os.environ['HOST_NAME']
+path = pathlib.Path(f'./hosts/{hn}/variables.nix')
+text = path.read_text(encoding='utf-8')
+
+pairs = [
+  ('gitUsername', os.environ['GIT_USERNAME']),
+  ('gitEmail', os.environ['GIT_EMAIL']),
+  ('hostName', os.environ['HOST_NAME']),
+  ('gpuProfile', os.environ['GPU_PROFILE']),
+  ('keyboardLayout', os.environ['KB_LAYOUT']),
+  ('keyboardVariant', os.environ['KB_VARIANT']),
+  ('consoleKeyMap', os.environ['CONSOLE_KEYMAP']),
+]
+
+for key, val in pairs:
+    # Replace both in-block and top-level lines of the form: key = "...";
+    pat = re.compile(rf'^(\s*{re.escape(key)}\s*=\s*")[^"]*(";\s*)$', flags=re.M)
+    text = pat.sub(lambda m, v=val: m.group(1) + v + m.group(2), text)
+
+path.write_text(text, encoding='utf-8')
+PY
+
 rm ./hosts/$hostName/variables.nix.bak
 
 echo "Configuration files updated successfully!"
