@@ -197,43 +197,12 @@ Please type out your choice: " profile
   echo -e "${GREEN}Selected GPU profile: $profile${NC}"
 fi
 
-print_header "⚠️  CRITICAL WARNING - Existing ZaneyOS Detected"
+print_header "Repository Setup"
 
 backupname=$(date +"%Y-%m-%d-%H-%M-%S")
-if [ -d "zaneyos" ]; then
-  echo -e "${RED}╔═══════════════════════════════════════════════════════════════════════╗${NC}"
-  echo -e "${RED}║                    ⚠️  IMPORTANT WARNING ⚠️                           ║${NC}"
-  echo -e "${RED}║                                                                       ║${NC}"
-  echo -e "${RED}║  An existing ZaneyOS installation was detected at ~/zaneyos           ║${NC}"
-  echo -e "${RED}║                                                                       ║${NC}"
-  echo -e "${RED}║  This installer will COMPLETELY REPLACE your existing configuration!  ║${NC}"
-  echo -e "${RED}║  All customizations, packages, and settings will be LOST!             ║${NC}"
-  echo -e "${RED}║                                                                       ║${NC}"
-  echo -e "${RED}║     ** A backup copy of your config will be created **                ║${NC}"
-  echo -e "${RED}║      * You will have to merge your changes back **                    ║${NC}"
-  echo -e "${RED}║                                                                       ║${NC}"
-  echo -e "${RED}╚═══════════════════════════════════════════════════════════════════════╝${NC}"
-  echo ""
-  echo -e "${YELLOW}If you REALLY want to do a fresh installation (losing all customizations):${NC}"
-  read -p "Type 'REPLACE' to continue with fresh install or Ctrl+C to cancel: " confirmation
-  if [ "$confirmation" != "REPLACE" ]; then
-    echo -e "${GREEN}Installation cancelled. ${NC}"
-    exit 0
-  fi
-  echo -e "${GREEN}zaneyos exists, backing up to .config/zaneyos-backups folder.${NC}"
-  if [ -d ".config/zaneyos-backups" ]; then
-    echo -e "${GREEN}Moving current version of ZaneyOS to backups folder.${NC}"
-    mv "$HOME"/zaneyos .config/zaneyos-backups/"$backupname"
-    sleep 1
-  else
-    echo -e "${GREEN}Creating the backups folder & moving ZaneyOS to it.${NC}"
-    mkdir -p .config/zaneyos-backups
-    mv "$HOME"/zaneyos .config/zaneyos-backups/"$backupname"
-    sleep 1
-  fi
-else
-  echo -e "${GREEN}Thank you for choosing ZaneyOS.${NC}"
-  echo -e "${GREEN}I hope you find your time here enjoyable!${NC}"
+if [ -d "$HOME/zaneyos" ]; then
+  echo -e "${YELLOW}Backing up existing zaneyos-${backupname}${NC}"
+  mv "$HOME/zaneyos" "$HOME/zaneyos-${backupname}"
 fi
 
 print_header "Cloning ZaneyOS Repository"
@@ -432,9 +401,9 @@ print_header "Setting Nix Configuration"
 NIX_CONFIG="experimental-features = nix-command flakes"
 
 print_header "Initiating NixOS Build"
-read -p "Ready to run initial build? (Y/N): " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+printf "%s" "Ready to run initial build? [y/N]: "
+read -r REPLY
+if ! [[ "$REPLY" =~ ^[Yy]$ ]]; then
   echo -e "${RED}Build cancelled.${NC}"
   exit 1
 fi
