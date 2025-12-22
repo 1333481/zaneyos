@@ -7,6 +7,15 @@
 
 # 🚀 **Current Release - ZaneyOS v2.5.6**
 
+#### 📅 **Updated: December 20th, 2025**
+
+- Refactored:
+  - Introduced `modules/options.nix` as a central location for `zaneyos` option definitions.
+  - Updated `flake.nix` to import `modules/core` directly.
+- Documentation:
+  - Updated `README.md`, `WARP.md`, `FAQ.md`, and `cheatsheets/project-guide.md` to reflect the new structure.
+  - Updated Spanish documentation (`README.es.md`, `FAQ.es.md`, etc.).
+
 #### 📅 **Updated: December 14th, 2025**
 
 - Fixed:
