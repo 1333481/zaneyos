@@ -10,5 +10,6 @@
     drivers.nvidia-prime.enable = false;
     drivers.intel.enable = false;
     vm.guest-services.enable = true;
+    zaneyos.enableSmartD = lib.mkForce false;
   };
 }
