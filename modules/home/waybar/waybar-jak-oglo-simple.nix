@@ -594,7 +594,6 @@ in {
             "class<Warp|warp|dev.warp.Warp|warp-terminal>" = "󰰭 ";
             "class<com.mitchellh.ghostty>" = " 󰊠";
             "class<remote-viewer|virt-viewer>" = " ";
-            "class<helium>" = " ";
             "class<[Ss]ignal|signal-desktop|org.signal.Signal>" = "󰍩 ";
             "title<.*Signal.*>" = "󰍩 ";
             "class<remmina|org.remmina.Remmina>" = "🖥️ ";

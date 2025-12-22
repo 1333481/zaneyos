@@ -727,14 +727,12 @@ in {
           "window-rewrite" = {
             "title<.*amazon.*>" = " ";
             "title<.*reddit.*>" = " ";
-            "title<.*[Hh]elium.*>" = " ";
 
             "class<firefox|org.mozilla.firefox|librewolf|floorp|mercury-browser|[Cc]achy-browser>" = " ";
             "class<zen>" = "󰰷 ";
             "class<waterfox|waterfox-bin>" = " ";
             "class<microsoft-edge>" = " ";
             "class<Chromium|Thorium|[Cc]hrome>" = " ";
-            "class<helium>" = " ";
             "class<brave-browser>" = "🦁 ";
             "class<tor browser>" = " ";
             "class<firefox-developer-edition>" = "🦊 ";

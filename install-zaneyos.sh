@@ -28,19 +28,22 @@ print_header() {
   echo -e "${GREEN}╚═══════════════════════════════════════════════════════════════════════╝${NC}"
 }
 
-# Function to print a configuration summary
+# Function to print a configuration summary (robust formatting)
 print_summary() {
-  echo -e "${CYAN}╔═══════════════════════════════════════════════════════════════════════╗${NC}"
-  echo -e "${CYAN}║                 📋 Installation Configuration Summary                 ║${NC}"
-  echo -e "${CYAN}╠═══════════════════════════════════════════════════════════════════════╣${NC}"
-  echo -e "${CYAN}║  🖥️  Hostname:        ${BLUE}${1}${NC}"
-  echo -e "${CYAN}║  🎮 GPU Profile:      ${BLUE}${2}${NC}"
-  echo -e "${CYAN}║  👤 System Username:  ${BLUE}${3}${NC}"
-  echo -e "${CYAN}║  🌐 Timezone:         ${BLUE}${4}${NC}"
-  echo -e "${CYAN}║  ⌨️  Keyboard Layout:  ${BLUE}${5}${NC}"
-  echo -e "${CYAN}║  ⌨️  Keyboard Variant: ${BLUE}${6:-none}${NC}"
-  echo -e "${CYAN}║  🖥️  Console Keymap:   ${BLUE}${7:-$5}${NC}"
-  echo -e "${CYAN}╚═══════════════════════════════════════════════════════════════════════╝${NC}"
+  local hostname="$1" profile="$2" user="$3" tz="$4" layout="$5" variant="$6" console="$7"
+  local v
+  v="${variant:-none}"
+  printf "%b\n" "${CYAN}╔═══════════════════════════════════════════════════════════════════════╗${NC}"
+  printf "%b\n" "${CYAN}║                 📋 Installation Configuration Summary                 ║${NC}"
+  printf "%b\n" "${CYAN}╠═══════════════════════════════════════════════════════════════════════╣${NC}"
+  printf "%b\n" "${CYAN}║  🖥️  Hostname:        ${BLUE}${hostname}${NC}"
+  printf "%b\n" "${CYAN}║  🎮 GPU Profile:      ${BLUE}${profile}${NC}"
+  printf "%b\n" "${CYAN}║  👤 System Username:  ${BLUE}${user}${NC}"
+  printf "%b\n" "${CYAN}║  🌐 Timezone:         ${BLUE}${tz}${NC}"
+  printf "%b\n" "${CYAN}║  ⌨️  Keyboard Layout:  ${BLUE}${layout}${NC}"
+  printf "%b\n" "${CYAN}║  ⌨️  Keyboard Variant: ${BLUE}${v}${NC}"
+  printf "%b\n" "${CYAN}║  🖥️  Console Keymap:   ${BLUE}${console:-$layout}${NC}"
+  printf "%b\n" "${CYAN}╚═══════════════════════════════════════════════════════════════════════╝${NC}"
 }
 
 # Function to print an error message
@@ -336,14 +339,6 @@ echo ""
 echo -e "${GREEN}✓ Configuration accepted. Starting installation...${NC}"
 echo ""
 echo -e "${BLUE}Updating configuration files...${NC}"
-echo -e "  ${CYAN}installusername:${NC} $installusername"
-echo -e "  ${CYAN}hostName:${NC} $hostName"
-echo -e "  ${CYAN}profile:${NC} $profile"
-echo -e "  ${CYAN}timezone:${NC} $timezone"
-echo -e "  ${CYAN}keyboardLayout:${NC} $keyboardLayout"
-echo "  installusername: $installusername"
-echo "  hostName: $hostName"
-echo "  profile: $profile"
 
 # Update flake.nix safely without removing existing hosts
 cp ./flake.nix ./flake.nix.bak
