@@ -375,19 +375,30 @@ echo "  installusername: $installusername"
 echo "  hostName: $hostName"
 echo "  profile: $profile"
 
-# Update flake.nix (simple pattern replacements that work)
-# Create backup first, before any changes
+# Update flake.nix safely without removing existing hosts
 cp ./flake.nix ./flake.nix.bak
-# Use sed for hostname (more reliable)
-sed -i 's|^[[:space:]]*host[[:space:]]*=[[:space:]]*"[^"]*"|    host = "'$hostName'"|' ./flake.nix.bak
-# Use sed for profile (handles variable indentation)
-sed -i 's|^[[:space:]]*profile[[:space:]]*=[[:space:]]*"[^"]*";|    profile = "'$profile'";|' ./flake.nix.bak
-# Use sed for username (handles variable indentation)
-sed -i 's|^[[:space:]]*username[[:space:]]*=[[:space:]]*"[^"]*";|    username = "'$installusername'";|' ./flake.nix.bak
-echo -e "${GREEN}After sed replacements:${NC}"
-grep -E "(host|profile|username) =" ./flake.nix.bak
-cp ./flake.nix.bak ./flake.nix
-rm ./flake.nix.bak
+
+# 1) Update username if present
+sed -i 's|^[[:space:]]*username[[:space:]]*=[[:space:]]*"[^"]*";|    username = "'$installusername'";|' ./flake.nix
+
+# 2) Ensure the new host is listed in the hosts array (append if missing)
+awk -v h="$hostName" '
+  BEGIN { in_hosts=0; seen=0 }
+  /^\s*hosts\s*=\s*\[/ { in_hosts=1 }
+  in_hosts && match($0, /"[^\"]+"/) {
+    line=$0
+    if (index(line, "\"" h "\"")>0) seen=1
+  }
+  in_hosts && /\];/ {
+    if (!seen) print "      \"" h "\""
+    in_hosts=0
+  }
+  { print }
+' ./flake.nix > ./flake.nix.tmp && mv ./flake.nix.tmp ./flake.nix
+
+# Show summary of effective username and hosts list lines
+echo -e "${GREEN}After flake updates:${NC}"
+grep -E "username\s*=|^\s*hosts\s*=|^\s*\"[^"]+\"$|^\s*\];$" -n ./flake.nix | sed -n '/hosts = \[/,/];/p'
 
 # Update timezone in system.nix
 cp ./modules/core/system.nix ./modules/core/system.nix.bak
@@ -447,7 +458,8 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
-sudo nixos-rebuild boot --flake ~/zaneyos/#${profile}
+# Build using the selected HOST (GPU profile is configured inside the host files)
+sudo nixos-rebuild boot --flake ~/zaneyos#${hostName}
 
 # Check the exit status of the last command (nixos-rebuild)
 if [ $? -eq 0 ]; then
