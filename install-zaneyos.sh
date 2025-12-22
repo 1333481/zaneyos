@@ -408,40 +408,12 @@ rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
 cp ./hosts/$hostName/variables.nix ./hosts/$hostName/variables.nix.bak
-
-# Use Python for robust, quote-safe updates (avoids shell/sed escaping pitfalls)
-GIT_USERNAME="$gitUsername"
-GIT_EMAIL="$gitEmail"
-HOST_NAME="$hostName"
-GPU_PROFILE="$profile"
-KB_LAYOUT="$keyboardLayout"
-KB_VARIANT="$keyboardVariant"
-CONSOLE_KEYMAP="$consoleKeyMap"
-
-python3 - <<'PY'
-import os, re, pathlib, sys
-hn = os.environ['HOST_NAME']
-path = pathlib.Path(f'./hosts/{hn}/variables.nix')
-text = path.read_text(encoding='utf-8')
-
-pairs = [
-  ('gitUsername', os.environ['GIT_USERNAME']),
-  ('gitEmail', os.environ['GIT_EMAIL']),
-  ('hostName', os.environ['HOST_NAME']),
-  ('gpuProfile', os.environ['GPU_PROFILE']),
-  ('keyboardLayout', os.environ['KB_LAYOUT']),
-  ('keyboardVariant', os.environ['KB_VARIANT']),
-  ('consoleKeyMap', os.environ['CONSOLE_KEYMAP']),
-]
-
-for key, val in pairs:
-    # Replace both in-block and top-level lines of the form: key = "...";
-    pat = re.compile(rf'^(\s*{re.escape(key)}\s*=\s*")[^"]*(";\s*)$', flags=re.M)
-    text = pat.sub(lambda m, v=val: m.group(1) + v + m.group(2), text)
-
-path.write_text(text, encoding='utf-8')
-PY
-
+python3 ./scripts/update_vars.py "./hosts/$hostName/variables.nix" \
+  "$gitUsername" "$gitEmail" "$hostName" "$profile" "$keyboardLayout" "$keyboardVariant" "$consoleKeyMap" || {
+  print_error "Failed to update hosts/$hostName/variables.nix";
+  echo "Check the file exists and the script at ./scripts/update_vars.py is present.";
+  exit 1;
+}
 rm ./hosts/$hostName/variables.nix.bak
 
 echo "Configuration files updated successfully!"
