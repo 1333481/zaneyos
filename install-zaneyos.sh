@@ -401,7 +401,9 @@ grep -E "username\s*=|^\s*hosts\s*=|^\s*\"[^"]+\"$|^\s*\];$" -n ./flake.nix | se
 
 # Update timezone in system.nix
 cp ./modules/core/system.nix ./modules/core/system.nix.bak
-sed -i -E "s|^  time\\.timeZone = \".*\";|  time.timeZone = \"${timezone}\";|" ./modules/core/system.nix
+# Escape sed-sensitive chars in timezone (e.g., & and |)
+tz_safe=$(printf '%s' "$timezone" | sed 's/[&|]/\\&/g')
+sed -i -E 's|^  time\.timeZone = ".*";|  time.timeZone = '"\"$tz_safe\""';|' ./modules/core/system.nix
 rm ./modules/core/system.nix.bak
 
 # Update variables in host file; support both old style and new zaneyos options block
