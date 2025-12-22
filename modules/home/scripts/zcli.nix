@@ -162,31 +162,36 @@ in
       echo "Usage: zcli [command] [options]"
       echo ""
       echo "Commands:"
-      echo "  cleanup         - Clean up old system generations. Can specify a number to keep."
-      echo "  diag            - Create a system diagnostic report."
-      echo "                    (Filename: homedir/diag.txt)"
-      echo "  list-gens       - List user and system generations."
-      echo "  rebuild         - Rebuild the NixOS system configuration."
-      echo "  rebuild-boot    - Rebuild and set as boot default (activates on next restart)."
-      echo "  trim            - Trim filesystems to improve SSD performance."
-      echo "  update          - Update the flake and rebuild the system."
-      echo "  update-host     - Auto set host and profile in flake.nix."
-      echo "                    (Opt: zcli update-host [hostname] [profile])"
+      echo "  cleanup          - Clean up old system generations. Can specify a number to keep."
+      echo "  diag             - Create a system diagnostic report."
+      echo "                     (Filename: homedir/diag.txt)"
+      echo "  list-gens        - List user and system generations."
+      echo "  list-hosts       - Show current hosts from flake.nix (prints the hosts array)."
+      echo "  rebuild          - Rebuild the NixOS system configuration."
+      echo "  rebuild-boot     - Rebuild and set as boot default (activates on next restart)."
+      echo "  trim             - Trim filesystems to improve SSD performance."
+      echo "  update           - Update the flake and rebuild the system."
+      echo "  update-host      - Auto set host and profile in flake.nix."
+      echo "                     (Opt: zcli update-host [hostname] [profile])"
+      echo "  add-host         - Create host from template and add to flake.nix hosts list."
+      echo "                     (Opt: zcli add-host [hostname] [profile])"
+      echo "  del-host         - Remove host directory and prune from flake.nix hosts list."
+      echo "                     (Usage: zcli del-host [hostname])"
       echo ""
       echo "Options for rebuild, rebuild-boot, and update commands:"
-      echo "  --dry, -n       - Show what would be done without doing it"
-      echo "  --ask, -a       - Ask for confirmation before proceeding"
-      echo "  --cores N       - Limit build to N cores (useful for VMs)"
-      echo "  --verbose, -v   - Show verbose output"
-      echo "  --no-nom        - Don't use nix-output-monitor"
+      echo "  --dry, -n        - Show what would be done without doing it"
+      echo "  --ask, -a        - Ask for confirmation before proceeding"
+      echo "  --cores N        - Limit build to N cores (useful for VMs)"
+      echo "  --verbose, -v    - Show verbose output"
+      echo "  --no-nom         - Don't use nix-output-monitor"
       echo ""
       echo "Doom Emacs:"
-      echo "  doom install    - Install Doom Emacs using get-doom script."
-      echo "  doom status     - Check if Doom Emacs is installed."
-      echo "  doom remove     - Remove Doom Emacs installation."
-      echo "  doom update     - Update Doom Emacs (runs doom sync)."
+      echo "  doom install     - Install Doom Emacs using get-doom script."
+      echo "  doom status      - Check if Doom Emacs is installed."
+      echo "  doom remove      - Remove Doom Emacs installation."
+      echo "  doom update      - Update Doom Emacs (runs doom sync)."
       echo ""
-      echo "  help            - Show this help message."
+      echo "  help             - Show this help message."
     }
 
     handle_backups() {
@@ -329,6 +334,28 @@ in
       fi
     }
 
+    # --- flake.nix host list helpers ---
+    hosts_block() {
+      ${pkgs.gnused}/bin/sed -n '/^\s*hosts\s*=\s*\[/,/\];/p' "$FLAKE_NIX_PATH"
+    }
+
+    list_hosts_from_flake() {
+      hosts_block | ${pkgs.gnugrep}/bin/grep -o '"[^"]\+"' | ${pkgs.coreutils}/bin/tr -d '"'
+    }
+
+    ensure_host_in_flake_hosts() {
+      local h="$1"
+      if ! list_hosts_from_flake | ${pkgs.gnugrep}/bin/grep -qx "$h"; then
+        echo "Adding '$h' to flake hosts list..."
+        ${pkgs.gnused}/bin/sed -i '/^\s*hosts\s*=\s*\[/a\      \"'"$h"'\"' "$FLAKE_NIX_PATH"
+      fi
+    }
+
+    remove_host_from_flake_hosts() {
+      local h="$1"
+      ${pkgs.gnused}/bin/sed -i '/^\s*hosts\s*=\s*\[/,/\];/ { /^\s*"'"$h"'"\s*$/d }' "$FLAKE_NIX_PATH"
+    }
+
     # --- Main Logic ---
     if [ "$#" -eq 0 ]; then
       echo "Error: No command provided." >&2
@@ -374,6 +401,14 @@ in
         echo ""
         echo "--- System Generations ---"
         ${pkgs.nix}/bin/nix profile history --profile /nix/var/nix/profiles/system || echo "Could not list system generations."
+        ;;
+      list-hosts)
+        if [ ! -f "$FLAKE_NIX_PATH" ]; then
+          echo "Error: flake.nix not found at $FLAKE_NIX_PATH" >&2
+          exit 1
+        fi
+        echo "Hosts defined in flake.nix:"
+        list_hosts_from_flake | ${pkgs.coreutils}/bin/sort | ${pkgs.coreutils}/bin/uniq
         ;;
       rebuild)
         verify_hostname
@@ -496,10 +531,7 @@ in
         fi
 
         # Ensure the host appears in the flake 'hosts' array
-        if ! ${pkgs.gnugrep}/bin/grep -q "\\\"$target_hostname\\\"" "$FLAKE_NIX_PATH"; then
-          echo "Adding '$target_hostname' to flake hosts list..."
-          ${pkgs.gnused}/bin/sed -i "/^\\s*hosts\\s*=\\s*\\[/a\\      \\\"$target_hostname\\\"" "$FLAKE_NIX_PATH"
-        fi
+        ensure_host_in_flake_hosts "$target_hostname"
 
         echo "Host '$target_hostname' is ready. You can now run: zcli rebuild"
         ;;
@@ -556,6 +588,9 @@ in
           echo "hardware.nix generated."
         fi
 
+        # Ensure the host appears in flake.nix hosts list
+        ensure_host_in_flake_hosts "$hostname"
+
         echo "Adding new host to git..."
         ${pkgs.git}/bin/git -C "$HOME/$PROJECT" add .
         echo "hostname: $hostname added"
@@ -578,6 +613,8 @@ in
         if [[ $REPLY =~ ^[Yy]$ ]]; then
           echo "Deleting host '$hostname'..."
           ${pkgs.coreutils}/bin/rm -rf "$HOME/$PROJECT/hosts/$hostname"
+          # Remove from flake.nix hosts list as well
+          remove_host_from_flake_hosts "$hostname"
           ${pkgs.git}/bin/git -C "$HOME/$PROJECT" add .
           echo "hostname: $hostname removed"
         else

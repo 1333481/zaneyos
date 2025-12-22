@@ -17,6 +17,8 @@
   - Same commands as before using `zcli` util.
   - Removed redundant git clones during install
   - Hosts are saved in the flake no need to `zcli update-host`
+  - Updated `zcli` `add-host` and `del-host` updated '
+  - New feature `zcli list-hosts` added
 
 #### 📅 **Updated: December 20th, 2025**
 
