@@ -3,7 +3,7 @@
   config,
   ...
 }: let
-  inherit (config.zaneyos) barChoice ;
+  inherit (config.zaneyos) barChoice;
   # Noctalia-specific packages
   noctaliaPkgs =
     if barChoice == "noctalia"
@@ -13,6 +13,10 @@
         app2unit # launcher for noctalia-shell
       ]
     else [];
+
+  # bleeding edge packages from nixpkgs-unstable
+  unstablePkgs = with pkgs.unstable; [
+  ];
 in {
   programs = {
     neovim = {
@@ -40,6 +44,7 @@ in {
 
   environment.systemPackages = with pkgs;
     noctaliaPkgs
+    ++ unstablePkgs
     ++ [
       alejandra # nix formatter
       amfora # Fancy Terminal Browser For Gemini Protocol
