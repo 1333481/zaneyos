@@ -17,6 +17,13 @@
     (import ./screenshootin.nix {inherit pkgs;})
     (import ./squirtle.nix {inherit pkgs;})
     (import ./task-waybar.nix {inherit pkgs;})
+    # Fastfetch wrappers
+    (import ./ff.nix {inherit pkgs;})
+    (import ./ff1.nix {inherit pkgs;})
+    (import ./ff2.nix {inherit pkgs;})
+    (import ./ff3.nix {inherit pkgs;})
+    (import ./ff4.nix {inherit pkgs;})
+    (import ./ff5.nix {inherit pkgs;})
     (import ./wallsetter.nix {
       inherit pkgs;
       inherit username;
