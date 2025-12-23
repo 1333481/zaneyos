@@ -3,7 +3,12 @@
     # Provide pkgs.google-antigravity via antigravity-nix overlay
     inputs.antigravity-nix.overlays.default
 
-# Local packages overlay (empty)
-    (final: prev: { })
+    # pkgs.unstable overlay for bleeding edge applications
+    (_final: prev: {
+      unstable = import inputs.nixpkgs-unstable {
+        inherit (prev.stdenv.hostPlatform) system;
+        config.allowUnfree = true;
+      };
+    })
   ];
 }
