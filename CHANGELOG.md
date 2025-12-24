@@ -7,11 +7,14 @@
 
 # 🚀 **Current Release - ZaneyOS v2.5.6**
 
-#### 📅 **Updated: December 23th, 2025**
+#### 📅 **Updated: December 24th, 2025**
 
-- Added option to disable/enable scanner
+- Added:
+- Option to disable/enable scanners
 - Hardware clock options enhanced
+- Moved flatpak to own config file and out of flake.nix
   - Thnaks [codingismy11to7](https://github.com/codingismy11to7)
+- `Caligula` TUI for writing ISOs
 
 #### 📅 **Updated: December 22th, 2025**
 
