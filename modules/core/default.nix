@@ -14,6 +14,7 @@
     ./printing.nix
     ./ly.nix
     ./sddm.nix
+    ./scanners.nix
     ./security.nix
     ./services.nix
     ./steam.nix

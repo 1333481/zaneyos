@@ -36,7 +36,6 @@ in {
       "libvirtd" #Virt manager/QEMU access
       "lp"
       "networkmanager"
-      "scanner"
       "wheel" #sudo access
       "vboxusers" #Virtual Box
     ];

@@ -34,6 +34,12 @@ with lib; {
       description = "GPU profile for drivers.";
     };
 
+    localHardwareClock = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Set hardware clock to local time for better interop with some dual boot or vm setups.";
+    };
+
     # Enable/disable bundled applications
     tmuxEnable = mkOption {
       type = types.bool;
