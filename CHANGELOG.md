@@ -7,6 +7,12 @@
 
 # 🚀 **Current Release - ZaneyOS v2.5.6**
 
+#### 📅 **Updated: December 23th, 2025**
+
+- Added option to disable/enable scanner
+- Hardware clock options enhanced
+  - Thnaks [codingismy11to7](https://github.com/codingismy11to7)
+
 #### 📅 **Updated: December 22th, 2025**
 
 - Huge refactor in flake and how variables are handled
