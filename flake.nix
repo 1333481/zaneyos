@@ -61,7 +61,6 @@
         modules = [
           ./modules/core
           ./modules/drivers
-          nix-flatpak.nixosModules.nix-flatpak
           ./hosts/${host}
           ./profiles
         ];
