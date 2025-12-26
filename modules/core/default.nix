@@ -8,6 +8,7 @@
     ./network.nix
     ./nfs.nix
     ./nh.nix
+    ./noctalia-shell.nix
     ./quickshell.nix
     ./overlays.nix
     ./packages.nix
