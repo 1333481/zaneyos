@@ -14,6 +14,7 @@ in {
     ./network.nix
     ./nfs.nix
     ./nh.nix
+    ./noctalia-shell.nix
     ./quickshell.nix
     ./packages.nix
     ./printing.nix
