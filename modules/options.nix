@@ -29,7 +29,7 @@ with lib; {
     };
 
     gpuProfile = mkOption {
-      type = types.enum ["amd" "nvidia" "nvidia-laptop" "amd-hybrid" "intel" "vm"];
+      type = types.enum ["amd" "nvidia" "nvidia-laptop" "amd-nvidia-hybrid" "intel" "vm"];
       example = "nvidia";
       description = "GPU profile for drivers.";
     };

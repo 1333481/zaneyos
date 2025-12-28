@@ -3,12 +3,12 @@
   lib,
   ...
 }: {
-  config = lib.mkIf (config.zaneyos.gpuProfile == "amd-hybrid") {
+  config = lib.mkIf (config.zaneyos.gpuProfile == "amd-nvidia-hybrid") {
     # Enable AMD+NVIDIA hybrid drivers (Prime offload with AMD as primary)
     drivers.nvidia-amd-hybrid = {
       enable = true;
-      amdgpuBusID = config.zaneyos.amdgpuID;
-      nvidiaBusID = config.zaneyos.nvidiaID;
+      amdgpuBusId = config.zaneyos.amdgpuID;
+      nvidiaBusId = config.zaneyos.nvidiaID;
     };
 
     # Ensure other driver toggles are off for this profile

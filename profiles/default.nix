@@ -1,7 +1,7 @@
 _: {
   imports = [
     ./amd
-    ./amd-hybrid
+    ./amd-nvidia-hybrid
     ./intel
     ./nvidia
     ./nvidia-laptop

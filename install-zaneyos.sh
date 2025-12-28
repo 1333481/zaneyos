@@ -157,10 +157,10 @@ if lspci | grep -qi 'vga\|3d'; then
 
   if $has_vm; then
     DETECTED_PROFILE="vm"
+  elif $has_nvidia && $has_amd; then
+    DETECTED_PROFILE="amd-nvidia-hybrid"
   elif $has_nvidia && $has_intel; then
     DETECTED_PROFILE="nvidia-laptop"
-  elif $has_nvidia && $has_amd; then
-    DETECTED_PROFILE="amd-hybrid"
   elif $has_nvidia; then
     DETECTED_PROFILE="nvidia"
   elif $has_amd; then
@@ -188,11 +188,11 @@ if [ -z "$profile" ]; then
   read -rp "Enter Your Hardware Profile (GPU)
 Options:
 [ amd ]
-    nvidia
-    nvidia-laptop
-    amd-hybrid
-    intel
-    vm
+amd-nvidia-hybrid
+intel
+nvidia
+nvidia-laptop
+vm
 Please type out your choice: " profile
   if [ -z "$profile" ]; then
     profile="amd"
