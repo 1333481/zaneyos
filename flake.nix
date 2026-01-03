@@ -67,6 +67,7 @@
       };
 
     hosts = [
+      "zaneyos-next"
       "default"
       "nixstation"
       "zaneyos-24-vm"
