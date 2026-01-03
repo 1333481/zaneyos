@@ -7,6 +7,20 @@
 
 # 🚀 **Current Release - ZaneyOS v2.5.6**
 
+#### 📅 **Updated: January 3rd, 2026**
+
+- Changed:
+  - moved to `nix-systems`
+    - better managemenmt of Architecture types
+- Fixed:
+  - Pressing a key now also does DPMS wakeup
+  - Noctalia Shell started twice
+    - Removed it from hyprland exec-once
+    - It runs as systemctl user service
+    - Corrected the keybinds to work with systemd user service
+- Cleanup:
+  - Home mgr packages
+
 #### 📅 **Updated: December 24th, 2025**
 
 - Added:
