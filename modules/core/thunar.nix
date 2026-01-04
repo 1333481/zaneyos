@@ -18,4 +18,3 @@ in {
     ffmpegthumbnailer # Need For Video / Image Preview
   ];
 }
-
