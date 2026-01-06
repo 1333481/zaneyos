@@ -8,6 +8,7 @@
       "pkill waybar"
       "killall -q swaync"
       "pkill swaync"
+      "noctalia-shell &"
     ]
     else [];
   # Waybar-specific startup commands
