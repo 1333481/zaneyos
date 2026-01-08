@@ -7,11 +7,22 @@
 
 # 🚀 **Current Release - ZaneyOS v2.5.6**
 
+#### 📅 **Updated: January 6th, 2026**
+
+- Disabled `noctalia-shell` service
+  - Caused old version to be loaded
+  - Re-Added `noctalia-shell` to Hyprland startup
+- Removed `pypr` from Hyprland startup
+  - `pyprland` isn't used by default anymore
+- Fixed error in waybar file
+- Fixed `alejandra` error running `nix fmt`
+  - As a result of changing to `nix-systems`
+
 #### 📅 **Updated: January 3rd, 2026**
 
 - Changed:
   - moved to `nix-systems`
-    - better managemenmt of Architecture types
+    - better management of Architecture types
 - Fixed:
   - Pressing a key now also does DPMS wakeup
   - Noctalia Shell started twice
