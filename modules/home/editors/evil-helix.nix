@@ -11,7 +11,8 @@ lib.mkIf zaneyos.helixEnable {
     jsonnet-language-server
     luaformatter
     lua-language-server
-    marksman
+    #Amarksman    # NET based causes dotnet docnet-vmr to build (hours long)
+    multimarkdown
     taplo
     nil
     jq-lsp

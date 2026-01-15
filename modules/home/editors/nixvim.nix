@@ -308,7 +308,10 @@
       pyright
       lua-language-server
       zls
-      marksman
+      #markman is .NET based causes dotnet and dotnet-swr to build from source (hours long builds)
+      # switching to multimarkdown (C based)
+      #marksman
+      multimarkdown
       clang-tools
       prettierd
       stylua
