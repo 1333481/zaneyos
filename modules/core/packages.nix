@@ -36,7 +36,6 @@ in {
     seahorse.enable = true;
     fuse.userAllowOther = true;
     mtr.enable = true;
-    adb.enable = true;
     hyprlock.enable = true;
     gnupg.agent = {
       enable = true;
@@ -69,6 +68,7 @@ in {
       file-roller # Archive Manager
       gedit # Simple Graphical Text Editor
       gimp # Great Photo Editor
+      google-chrome # Browser
       mesa-demos # needed for inxi diag util
       tuigreet # The Login Manager (Sometimes Referred To As Display Manager)
       htop # Simple Terminal Based System Monitor
