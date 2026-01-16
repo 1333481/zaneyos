@@ -123,7 +123,7 @@ Please do yourself a favor and
 
 - Please feel free to raise an issue on the repo, please label a feature request
   with the title beginning with [feature request], thank you!
-- Contact us on [Discord](https://discord.gg/2cRdBs8) as well, for a potentially
+- Contact us on [Discord](https://discord.gg/XhZmNTnhtp) as well, for a potentially
   faster response.
 
 - Don't forget to checkout the [FAQ](https://zaney.org/wiki/zaneyos-2.3/faq)
@@ -262,7 +262,7 @@ Then:
 ![ZaneyOS Install Script Command](img/install-script.jpg)
 
 ```
-sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/stable-2.4/install-zaneyos.sh)
+sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/stable-2.5.9/install-zaneyos.sh)
 ```
 
 #### The install process will look something like this:
@@ -293,7 +293,7 @@ nix-shell -p git vim
 2. Clone this repo & enter it:
 
 ```
-cd && git clone https://gitlab.com/zaney/zaneyos.git -b stable-2.4 --depth=1 ~/zaneyos
+cd && git clone https://gitlab.com/zaney/zaneyos.git -b stable-2.5.9 --depth=1 ~/zaneyos
 cd zaneyos
 
 You can still run the `install.sh` script if you want to.
