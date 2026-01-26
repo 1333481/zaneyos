@@ -1,6 +1,6 @@
 [English](FAQ.md) | [Español](FAQ.es.md)
 
-# 💬 Preguntas frecuentes de ZaneyOS para v2.5.6
+# 💬 Preguntas frecuentes de ZaneyOS
 
 - **Fecha:** 14 de deciembre de 2025
 
@@ -413,9 +413,9 @@ Edita la línea `extraMonitorSettings`. **Ejemplos:**
 - Monitor Único: `extraMonitorSettings = "monitor=eDP-1,1920x1080@60,auto,1";`
 - Monitores Múltiples:
   `extraMonitorSettings = "
-    monitor=eDP-1,1920x1080@60,auto,auto
-    monitor=HDMI-A-1,2560x1440@75,auto,auto
-    ";`
+  monitor=eDP-1,1920x1080@60,auto,auto
+  monitor=HDMI-A-1,2560x1440@75,auto,auto
+  ";`
 
 - Para configuraciones multi-monitor más complejas, puedes usar la aplicación
   GUI, `nwg-displays` Esta mostrará tus monitores conectados actualmente

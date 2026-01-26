@@ -4,7 +4,7 @@
 
 ## ZaneyOS 🟰 Mejores Configs ❄️ NixOS
 
-\*\* Actualizado: 8 de deciembre de 2025
+\*\* Actualizado: 16 de enero de 2026
 
 ZaneyOS es una forma sencilla de reproducir mi configuración en cualquier sistema NixOS.
 Incluye el fondo de pantalla, scripts, aplicaciones, archivos de configuración y más.
@@ -47,12 +47,6 @@ Incluye el fondo de pantalla, scripts, aplicaciones, archivos de configuración 
 - Guía para Principiantes de Nix: [English](cheatsheets/nix-beginner-guide.md) | [Español](cheatsheets/nix-beginner-guide.es.md)
 - Guía de Personalización de Hyprland: [English](cheatsheets/hyprland-customization-guide.md) | [Español](cheatsheets/hyprland-customization-guide.es.md)
 
-### Ten en cuenta:
-
-> **Este proyecto tiene un [Wiki](https://zaney.org/wiki/zaneyos-2.3/). ¡Aprende a usar ZaneyOS aquí!**
-> **ddubs ha puesto mucho esfuerzo en el
-> [FAQ](https://zaney.org/wiki/zaneyos-2.3/faq), así que debería ser preciso.
-> Sin embargo, si notas que algo está mal, crea un issue o contáctanos en Discord.**
 
 #### 🍖 Requisitos
 
@@ -89,12 +83,7 @@ Incluye el fondo de pantalla, scripts, aplicaciones, archivos de configuración 
 - Muchas personas pacientes y con ganas de ayudar te apoyan usando ZaneyOS.
 - No dudes en pasar por el Discord para pedir ayuda.
 
-<div align="center">
 
-Hazte un favor y
-[lee el wiki](https://zaney.org/wiki/zaneyos-2.3/).
-
-</div>
 
 #### 📦 ¿Cómo instalo paquetes?
 
@@ -109,9 +98,8 @@ Hazte un favor y
 
 - Siéntete libre de abrir un issue en el repo. Por favor etiqueta las solicitudes
   de funcionalidades comenzando el título con [feature request], ¡gracias!
-- Contáctanos también en [Discord](https://discord.gg/2cRdBs8) para una respuesta potencialmente más rápida.
+- Contáctanos también en [Discord](https://discord.gg/XhZmNTnhtp) para una respuesta potencialmente más rápida.
 
-- No olvides revisar el [FAQ](https://zaney.org/wiki/zaneyos-2.3/faq)
 
 # Atajos de Hyprland
 
@@ -240,7 +228,7 @@ Luego:
 ![Comando del script de instalación de ZaneyOS](img/install-script.jpg)
 
 ```
-sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/stable-2.4/install-zaneyos.sh)
+sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/stable-2.5.9/install-zaneyos.sh)
 ```
 
 #### El proceso de instalación se verá así:
@@ -271,7 +259,7 @@ nix-shell -p git vim
 2. Clona este repo y entra:
 
 ```
-cd && git clone https://gitlab.com/zaney/zaneyos.git -b stable-2.4 --depth=1 ~/zaneyos
+cd && git clone https://gitlab.com/zaney/zaneyos.git -b stable-2.5.9 --depth=1 ~/zaneyos
 cd zaneyos
 
 También puedes ejecutar el script `install.sh` si quieres.

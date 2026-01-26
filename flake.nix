@@ -72,7 +72,7 @@
       amd = mkNixosConfig "amd";
       nvidia = mkNixosConfig "nvidia";
       nvidia-laptop = mkNixosConfig "nvidia-laptop";
-      amd-hybrid = mkNixosConfig "amd-hybrid";
+      amd-nvidia-hybrid = mkNixosConfig "amd-nvidia-hybrid";
       intel = mkNixosConfig "intel";
       vm = mkNixosConfig "vm";
     };

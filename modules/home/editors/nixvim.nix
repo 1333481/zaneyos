@@ -332,7 +332,8 @@
       pyright
       lua-language-server
       zls
-      marksman
+      #marksman
+      multimarkdown
       clang-tools
       prettierd
       stylua

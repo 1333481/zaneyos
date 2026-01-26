@@ -5,7 +5,189 @@
 
 ---
 
-# 🚀 **Current Release - ZaneyOS v2.5.6**
+# 🚀 **Current Release - ZaneyOS v2.5.9**
+
+#### 📅 **Updated: January 23rd, 2026**
+
+- Added additional fonts
+- Fixed issue with Hypridle and Home Manager
+  - Added `systemdTarget = "hyprland-session.target";`
+  - Thank you `Yang Kexuan` for the fix
+  - Reference issue: [5899](https://github.com/nix-community/home-manager/issues/5899)
+
+#### 📅 **Updated: January 5th, 2026**
+
+- Removed extra newline in `exec-once.nix`
+- Fixed typo in `noctalia.nix`
+- Added docs reference per systemd spec
+- Improved code overall
+  - Thanks `lichen.gel.calm` for finding these issues
+- Disabled `noctalia-shell` systemd service
+  - Caused older revision of `noctalia-shell` to load
+  - Now started from hyprland
+
+#### 📅 **Updated: December 29th, 2025**
+
+- Removed extra `noctalia-shell` startup
+- Added initial support for AMD, NVIDIA Hybrid laptops
+- Keypress to recover from DPMS now enabled by default
+
+#### 📅 **Updated: December 21st, 2025**
+
+- Added user systemd service for `noctalia-shell`
+- Updated Hyprland bindings to accomodate change
+- Updated `nixvim`
+
+## `nixvim` Features Migrated from Bugsvim
+
+#### Custom Diagnostic Icons
+
+        ```lua
+        Error = " "
+        Warn = " "
+        Hint = ""
+        Info = ""
+        ```
+        - Custom unicode symbols for each diagnostic severity level
+        - Integrated into vim.diagnostic.config() for gutter display
+
+#### Diagnostic Display Options
+
+        - **Sign Column**: Shows diagnostic icons in the gutter with custom text and highlight groups
+        - **Virtual Text**: Inline diagnostics with custom prefix (`●`) and 2-space spacing
+        - **Virtual Lines**: Enhanced visibility for error context without cluttering
+        - **Underline**: Visual underline for error locations
+        - **Floating Window**: Hover diagnostics with rounded borders and source attribution
+        - **Severity Sorting**: Errors prioritized over warnings
+
+### 2. Text Yank Highlighting
+
+        **Migration**: Highlight yanked text for 200ms (IncSearch highlight group)
+        - Autocmd-based implementation in extraConfigLua
+        - Uses vim.hl.on_yank for smooth visual feedback
+
+### 3. LSP Attachment Keybindings
+
+        **Enhanced LSP Integration** with on-attach callbacks:
+        ```
+        K             - Hover documentation
+        gd            - Goto definition
+        gD            - Goto declaration
+        gi            - Goto implementation
+        gr            - References
+        <leader>rn    - Rename symbol
+        <leader>ca    - Code action
+        ```
+        - Buffer-local scope prevents global pollution
+        - Guard against multiple registrations with flag check
+
+### 4. Startup Dashboard
+
+        **Migration**: alpha-nvim with custom banner generation
+
+#### Dynamic Header Generation
+
+        - Primary: `toilet -f ansi-shadow NIXOS`
+        - Secondary: `figlet -f "ANSI Shadow" NIXOS`
+        - Tertiary: `figlet NIXOS`
+        - Fallback: ASCII art banner (9 lines)
+
+#### Dashboard Buttons
+
+        | Shortcut | Action | Command |
+        |----------|--------|---------|
+        | `f` | Find file | Telescope find_files |
+        | `r` | Recent files | Telescope oldfiles |
+        | `g` | Live grep | Telescope live_grep |
+        | `n` | New file | :enew |
+        | `e` | File browser | Neotree toggle |
+        | `q` | Quit | :qa |
+
+#### Footer
+
+        Dynamic version display: `NixVim • Neovim X.Y.Z`
+
+### 5. Theme Integration
+
+        **Migration**: Tokyo Night colorscheme with Stylix integration
+        - Tokyo Night colors for status line (lualine)
+        - Notify background color tied to Stylix palette: `#${config.lib.stylix.colors.base01}`
+        - Consistent color management across UI components
+
+## Comprehensive Feature Set
+
+### UI/Visuals Migrated
+
+        - Lualine status line (Tokyo Night theme)
+        - Bufferline for buffer management
+        - Indent-blankline for visual indentation
+        - Colorizer for inline color display
+        - Illuminate for reference highlighting
+        - Which-key for keybinding discovery (Helix preset)
+
+### Core Editing
+
+        - Treesitter for syntax highlighting
+        - Neo-tree file browser
+        - Telescope fuzzy finder with media_files extension
+        - Project.nvim for project management
+        - Hop/Leap motion plugins
+        - vim-surround for text manipulation
+        - Comment.nvim for toggle comments
+
+### Advanced Features
+
+        - snacks.nvim ecosystem (terminal, scratch buffers, zen mode, git integration, notifier)
+        - Noice for enhanced UI/messages
+        - Notify for notifications
+        - todo-comments for task navigation
+        - nvim-autopairs with Treesitter support
+
+### Language Support
+
+        **LSP Servers**: nil_ls, lua_ls, pyright, ts_ls, html, cssls, clangd, zls, marksman, hyprls, tailwindcss, bashls
+
+        **Formatters**:
+        - Nix: alejandra
+        - Lua: stylua
+        - JavaScript/TypeScript: prettierd
+        - Shell: shfmt
+
+        **Completion**: blink-cmp with luasnip snippets
+
+### Development Tools
+
+        - Git integration: gitsigns + diffview
+        - Markdown preview
+        - Trouble diagnostics panel
+        - Terminal: toggleterm with float direction
+
+## Implementation Details
+
+### Module Structure
+
+        - **File**: `modules/home/editors/nixvim.nix` (743 lines)
+        - **Framework**: Nixvim home-manager module
+        - **Theme**: Tokyo Night (primary), Catppuccin (fallback)
+        - **Runtime Tools**: 23+ packages (bat, chafa, fd, figlet, lazygit, prettierd, ripgrep, etc.)
+
+## Keybinding Highlights
+
+        ```
+        jk              - Exit insert mode
+        <leader>ff      - Find files
+        <leader>fm      - Find media files
+        <leader>lg      - Live grep
+        <leader>fe      - File explorer toggle
+        <leader>t       - Toggle terminal
+        <leader>.       - Toggle comment (line/visual)
+        <leader>z       - Zen mode
+        <leader>Z       - Zoom
+        <leader>gg      - Lazygit
+        <c-/>           - Terminal (via snacks)
+        ]t / [t         - Next/prev TODO comment
+        <leader>n       - Notification history
+        ```
 
 #### 📅 **Updated: December 21st, 2025**
 

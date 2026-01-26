@@ -4,7 +4,7 @@
 
 ## ZaneyOS 🟰 Best ❄️ NixOS Configs
 
-\*\* Updated: December 8th,2025
+\*\* Updated: January 16th, 2026
 
 ZaneyOS is a simple way of reproducing my configuration on any NixOS system.
 This includes the wallpaper, scripts, applications, config files, and more.
@@ -55,13 +55,7 @@ This includes the wallpaper, scripts, applications, config files, and more.
   [English](cheatsheets/hyprland-customization-guide.md) |
   [Español](cheatsheets/hyprland-customization-guide.es.md)
 
-### Please note:
-
-> **This project has a [Wiki](https://zaney.org/wiki/zaneyos-2.3/). Find out how
-> to use ZaneyOS here!** **ddubs has put a lot of effort into the
-> [FAQ](https://zaney.org/wiki/zaneyos-2.3/faq) so it should be accurate.
-> However, please if you notice that something is wrong with it create an issue
-> or reach out to us on Discord.**
+ 
 
 #### 🍖 Requirements
 
@@ -102,12 +96,6 @@ This includes the wallpaper, scripts, applications, config files, and more.
   running ZaneyOS.
 - Feel free to reach out on the Discord for any help with anything.
 
-<div align="center">
-
-Please do yourself a favor and
-[read the wiki](https://zaney.org/wiki/zaneyos-2.3/).
-
-</div>
 
 #### 📦 How To Install Packages?
 
@@ -123,10 +111,9 @@ Please do yourself a favor and
 
 - Please feel free to raise an issue on the repo, please label a feature request
   with the title beginning with [feature request], thank you!
-- Contact us on [Discord](https://discord.gg/2cRdBs8) as well, for a potentially
+- Contact us on [Discord](https://discord.gg/XhZmNTnhtp) as well, for a potentially
   faster response.
 
-- Don't forget to checkout the [FAQ](https://zaney.org/wiki/zaneyos-2.3/faq)
 
 # Hyprland Keybindings
 
@@ -262,7 +249,7 @@ Then:
 ![ZaneyOS Install Script Command](img/install-script.jpg)
 
 ```
-sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/stable-2.4/install-zaneyos.sh)
+sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/stable-2.5.9/install-zaneyos.sh)
 ```
 
 #### The install process will look something like this:
@@ -293,7 +280,7 @@ nix-shell -p git vim
 2. Clone this repo & enter it:
 
 ```
-cd && git clone https://gitlab.com/zaney/zaneyos.git -b stable-2.4 --depth=1 ~/zaneyos
+cd && git clone https://gitlab.com/zaney/zaneyos.git -b stable-2.5.9 --depth=1 ~/zaneyos
 cd zaneyos
 
 You can still run the `install.sh` script if you want to.
@@ -308,13 +295,7 @@ cp -r hosts/default hosts/<your-desired-hostname>
 git add .
 ```
 
-4. Edit `hosts/<your-desired-hostname>/variables.nix`.
-
-5. Edit `flake.nix` and fill in your username, profile, and hostname.
-
-6. Generate your hardware.nix like so:
-
-```
+4. Edit `hosts/<your-desired-hostname>/variab
 nixos-generate-config --show-hardware-config > hosts/<your-desired-hostname>/hardware.nix
 ```
 
