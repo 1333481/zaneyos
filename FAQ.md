@@ -229,6 +229,34 @@ Below are the keybindings for Hyprland, formatted for easy reference.
 <div style="margin-left: 20px;">
 
 <details>
+<summary>**How do I set default apps (PDF, browser) per host?**</summary>
+
+- Edit `~/zaneyos/hosts/<HOSTNAME>/variables.nix` inside the `zaneyos = { ... }` block and uncomment `mimeDefaultApps`.
+- Home Manager consumes `zaneyos.mimeDefaultApps` via `modules/home/xdg.nix` and writes `~/.config/mimeapps.list`.
+- Use real `.desktop` IDs from `/usr/share/applications` or `~/.local/share/applications`.
+
+```nix
+zaneyos = {
+  # ... other settings ...
+  # Default applications (picked up by HM xdg.mimeApps)
+  # mimeDefaultApps = {
+  #   # PDFs
+  #   "application/pdf" = ["okular.desktop"];
+  #   "application/x-pdf" = ["okular.desktop"];
+  #   # Web browser
+  #   "x-scheme-handler/http"  = ["google-chrome.desktop"];  # or brave-browser.desktop, firefox.desktop
+  #   "x-scheme-handler/https" = ["google-chrome.desktop"];
+  #   "text/html"              = ["google-chrome.desktop"];
+  #   # Files
+  #   "inode/directory" = ["thunar.desktop"];      # file manager
+  #   "text/plain"      = ["nvim.desktop"];        # or code.desktop
+  # };
+};
+```
+
+</details>
+
+<details>
 <summary>**How to I add flatpaks? ?**</summary>
 
 - Edit `~/zaneyos/modules/core/flatpak.nix`

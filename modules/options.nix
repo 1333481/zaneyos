@@ -240,5 +240,20 @@ with lib; {
       default = "5ab03f50";
       description = "Network hostId.";
     };
+
+    # Default applications per MIME type (consumed by Home Manager xdg.mimeApps)
+    # Example value:
+    # {
+    #   "application/pdf" = ["okular.desktop"];       # PDF handler
+    #   "x-scheme-handler/http" = ["google-chrome.desktop"];  # Browser
+    # }
+    mimeDefaultApps = mkOption {
+      type = types.attrsOf (types.listOf types.str);
+      default = {};
+      description = ''
+        Attribute set mapping MIME types or URL schemes to lists of .desktop IDs.
+        Applied to xdg.mimeApps.defaultApplications for the user on this host.
+      '';
+    };
   };
 }

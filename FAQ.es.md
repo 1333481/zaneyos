@@ -239,6 +239,34 @@ fácil referencia.
 <div style="margin-left: 20px;">
 
 <details>
+<summary>**¿Cómo configuro aplicaciones predeterminadas (PDF, navegador) por host?**</summary>
+
+- Edita `~/zaneyos/hosts/<HOSTNAME>/variables.nix` dentro del bloque `zaneyos = { ... }` y descomenta `mimeDefaultApps`.
+- Home Manager consume `zaneyos.mimeDefaultApps` vía `modules/home/xdg.nix` para escribir `~/.config/mimeapps.list`.
+- Usa IDs `.desktop` reales de `/usr/share/applications` o `~/.local/share/applications`.
+
+```nix
+zaneyos = {
+  # ... otros ajustes ...
+  # Aplicaciones predeterminadas (consumidas por xdg.mimeApps)
+  # mimeDefaultApps = {
+  #   # PDFs
+  #   "application/pdf" = ["okular.desktop"];
+  #   "application/x-pdf" = ["okular.desktop"];
+  #   # Navegador web
+  #   "x-scheme-handler/http"  = ["google-chrome.desktop"];  # o brave-browser.desktop, firefox.desktop
+  #   "x-scheme-handler/https" = ["google-chrome.desktop"];
+  #   "text/html"              = ["google-chrome.desktop"];
+  #   # Archivos
+  #   "inode/directory" = ["thunar.desktop"];      # gestor de archivos
+  #   "text/plain"      = ["nvim.desktop"];        # o code.desktop
+  # };
+};
+```
+
+</details>
+
+<details>
 <summary>**¿Cómo agrego flatpaks?**</summary>
 
 - Edita `~/zaneyos/modules/core/flatpak.nix`

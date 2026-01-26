@@ -64,6 +64,25 @@ _: {
     # or as a flatpak
     browser = "brave";
 
+    # Default applications for this host (written to ~/.config/mimeapps.list)
+    # Uncomment and adjust to set per-host defaults.
+    # mimeDefaultApps = {
+    #   # PDFs
+    #   "application/pdf" = ["okular.desktop"];
+    #   "application/x-pdf" = ["okular.desktop"];
+    #   # Web browser
+    #   "x-scheme-handler/http"  = ["google-chrome.desktop"];  # or brave-browser.desktop, firefox.desktop
+    #   "x-scheme-handler/https" = ["google-chrome.desktop"];
+    #   "text/html"              = ["google-chrome.desktop"];
+    #   # Text files
+    #   "text/plain" = ["nvim.desktop"];             # or code.desktop, org.gnome.TextEditor.desktop
+    #   # Images and video
+    #   "image/png" = ["imv.desktop"];               # or org.gnome.eog.desktop
+    #   "video/mp4" = ["mpv.desktop"];               # or vlc.desktop
+    #   # Folders (file manager)
+    #   "inode/directory" = ["thunar.desktop"];      # Thunar; or org.gnome.Nautilus.desktop, org.kde.dolphin.desktop
+    # };
+
     # Available Options:
     # Kitty, ghostty, wezterm, aalacrity
     # Note: kitty, wezterm, alacritty have to be enabled in `variables.nix`
