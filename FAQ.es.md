@@ -139,6 +139,32 @@ zcli doom status                  # Verifica estado de instalación
 </div>
 </details>
 
+<details>
+<summary>**¿Cómo configuro aplicaciones predeterminadas (PDF, navegador) por host?**</summary>
+
+- Edita `~/zaneyos/hosts/<HOSTNAME>/variables.nix` y descomenta `mimeDefaultApps`.
+- Home Manager usará esto vía `modules/home/xdg.nix` para escribir tu `~/.config/mimeapps.list`.
+- Usa IDs `.desktop` reales de `/usr/share/applications` o `~/.local/share/applications`.
+
+```nix
+# hosts/<HOSTNAME>/variables.nix
+# Aplicaciones predeterminadas a nivel de host (consumidas por xdg.mimeApps)
+# mimeDefaultApps = {
+#   # PDFs
+#   "application/pdf" = ["okular.desktop"];
+#   "application/x-pdf" = ["okular.desktop"];
+#   # Navegador web
+#   "x-scheme-handler/http"  = ["google-chrome.desktop"];  # o brave-browser.desktop, firefox.desktop
+#   "x-scheme-handler/https" = ["google-chrome.desktop"];
+#   "text/html"              = ["google-chrome.desktop"];
+#   # Archivos
+#   "inode/directory" = ["thunar.desktop"];      # gestor de archivos
+#   "text/plain"      = ["nvim.desktop"];        # o code.desktop
+# };
+```
+
+</details>
+
 ## Atajos Principales de Hyprland
 
 A continuación se muestran los atajos de teclado para Hyprland, formateados para
