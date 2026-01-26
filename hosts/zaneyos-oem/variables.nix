@@ -38,6 +38,22 @@
 
   # Program Options
   browser = "brave"; # Set Default Browser (google-chrome-stable for google-chrome)
+
+  # Host-level default applications (picked up by Home Manager xdg.mimeApps)
+  # Uncomment and adjust the .desktop IDs to set per-host defaults.
+  # mimeDefaultApps = {
+  #   # PDFs
+  #   "application/pdf" = ["okular.desktop"];
+  #   "application/x-pdf" = ["okular.desktop"];
+  #   # Web browser
+  #   "x-scheme-handler/http"  = ["google-chrome.desktop"];  # or brave-browser.desktop, firefox.desktop
+  #   "x-scheme-handler/https" = ["google-chrome.desktop"];
+  #   "text/html"              = ["google-chrome.desktop"];
+  #   # Files
+  #   "inode/directory" = ["thunar.desktop"];      # file manager
+  #   "text/plain"      = ["nvim.desktop"];        # or code.desktop
+  # };
+
   terminal = "kitty"; # Set Default System Terminal
   keyboardLayout = "us";
   keyboardVariant = "";

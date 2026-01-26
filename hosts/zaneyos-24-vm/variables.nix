@@ -48,6 +48,21 @@
   # or as a flatpak
   browser = "brave";
 
+  # Host-level default applications (picked up by Home Manager xdg.mimeApps)
+  # Uncomment and adjust the .desktop IDs to set per-host defaults.
+  # mimeDefaultApps = {
+  #   # PDFs
+  #   "application/pdf" = ["okular.desktop"];
+  #   "application/x-pdf" = ["okular.desktop"];
+  #   # Web browser
+  #   "x-scheme-handler/http"  = ["google-chrome.desktop"];  # or brave-browser.desktop, firefox.desktop
+  #   "x-scheme-handler/https" = ["google-chrome.desktop"];
+  #   "text/html"              = ["google-chrome.desktop"];
+  #   # Files
+  #   "inode/directory" = ["thunar.desktop"];      # file manager
+  #   "text/plain"      = ["nvim.desktop"];        # or code.desktop
+  # };
+
   # Available Options:
   # Kitty, ghostty, wezterm, aalacrity
   # Note: kitty, wezterm, alacritty have to be enabled in `variables.nix`
