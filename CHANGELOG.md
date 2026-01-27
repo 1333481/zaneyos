@@ -5,7 +5,20 @@
 
 ---
 
-# 🚀 **Current Release - ZaneyOS v2.5.9**
+# 🚀 **Current Release - ZaneyOS v2.6.0**
+
+#### 📅 **Updated: January 26th, 2026**
+
+- `noctalia-shell` regression:
+  - Removed `noctalia-shell` systemd service
+  - Caused old version of `noctalia-shell`
+  - Adjusted `noctalia-shell` bindings to match change
+- Default applications now settable
+  - Globally for all hosts
+    - `zaneyos/modules/home/xdg.nix`
+  - Per host
+    - `zaneyos/hosts/HOSTNAME/variables.nix`
+      - Host settings override `xdg.nix` settings
 
 #### 📅 **Updated: January 23rd, 2026**
 
