@@ -7,6 +7,10 @@
 
 # 🚀 **Current Release - ZaneyOS v2.6.0**
 
+#### 📅 **Updated: January 28th, 2026**
+
+- Disabled gnome in stylix. Caused install failure
+
 #### 📅 **Updated: January 26th, 2026**
 
 - `noctalia-shell` regression:
