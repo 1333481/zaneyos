@@ -237,7 +237,7 @@ else
 fi
 
 print_header "Cloning ZaneyOS Repository"
-git clone https://gitlab.com/zaney/zaneyos.git -b main --depth=1 ~/zaneyos
+git clone https://github.com/1333481/zaneyos.git -b main --depth=1 ~/zaneyos
 cd ~/zaneyos || exit 1
 
 print_header "Git Configuration"
